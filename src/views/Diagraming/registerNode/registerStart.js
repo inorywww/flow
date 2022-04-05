@@ -31,9 +31,7 @@ export default function registerStart (lf) {
           strokeWidth
         } = attributes
         return h(
-          'g',
-          {
-          },
+          'g', { },
           [
             h(
               'circle',

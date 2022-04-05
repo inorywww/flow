@@ -19,7 +19,7 @@ const routes = [
     component: () => import('../views/Diagrams/index.vue')
   },
   {
-    path: '/diagraming/:id', // 图表页
+    path: '/diagraming', // 图表页
     name: 'diagraming',
     component: () => import('../views/Diagraming/index.vue')
   },

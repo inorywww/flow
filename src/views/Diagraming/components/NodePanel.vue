@@ -42,11 +42,12 @@ export default {
 }
 .node-item {
   margin-bottom: 20px;
+  text-align: center;
 }
 .node-item-icon {
   width: 30px;
   height: 30px;
-  margin-left: 20px;
+  margin: 0 auto;
   background-size: cover;
 }
 .node-label {
