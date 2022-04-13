@@ -6,7 +6,26 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/home'
+    // redirect: '/home',
+    component: () => import('../views/Home/index.vue'),
+    children: [
+      {
+        path: 'diagrams',
+        component: () => import('../views/Diagrams/index.vue')
+      },
+      {
+        path: 'history',
+        component: () => import('../views/History/index.vue')
+      },
+      {
+        path: 'colla',
+        component: () => import('../views/Colla/index.vue')
+      },
+      {
+        path: 'trash',
+        component: () => import('../views/Trash/index.vue')
+      },
+    ]
   },
   {
     path: '/home', // 主页

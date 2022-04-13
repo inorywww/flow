@@ -94,7 +94,7 @@ export default {
         },
         grid: {
           size: 10,
-          visible: false
+          visible: true
         },
         keyboard: {
           enabled: true

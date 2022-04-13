@@ -1,12 +1,15 @@
 <template>
   <div id="home">
-    <h1>home</h1>
+    <LeftNav />
+    <router-view />
   </div>
 </template>
 
 <script>
+import LeftNav from '../../components/LeftNav.vue';
 export default {
   name: 'home',
+  components: { LeftNav }
 }
 </script>
 
