@@ -1,6 +1,6 @@
 <template>
   <div>
-     <el-button-group>
+    <el-button-group>
       <el-button type="plain" size="small" @click="$_zoomIn">放大</el-button>
       <el-button type="plain" size="small" @click="$_zoomOut">缩小</el-button>
       <el-button type="plain" size="small" @click="$_zoomReset">大小适应</el-button>

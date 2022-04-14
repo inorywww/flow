@@ -1,13 +1,22 @@
 <template>
   <div class="node-panel">
-    <div class="node-item"
-      v-for="item in nodeList"
-      :key="item.text"
-      @mousedown="$_dragNode(item)">
-    <div class="node-item-icon" :class="item.class">
-      <div v-if="item.type === 'user' || item.type === 'time'" class="shape"></div>
-    </div>
-    <span class="node-label">{{item.text}}</span>
+    <div class="node-group">
+      <div class="group-name" @click="change(0)">
+        <svg :class="{'exp': exps[0]}" t="1649939113190" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1242" width="8" height="8"><path d="M755.2 544L390.4 874.666667c-17.066667 14.933333-44.8 14.933333-59.733333-2.133334-6.4-8.533333-10.666667-19.2-10.666667-29.866666v-661.333334c0-23.466667 19.2-42.666667 42.666667-42.666666 10.666667 0 21.333333 4.266667 27.733333 10.666666l362.666667 330.666667c17.066667 14.933333 19.2 42.666667 2.133333 59.733333 2.133333 2.133333 0 2.133333 0 4.266667z" p-id="1243"></path></svg>
+        <span>基础图</span>
+      </div>
+      <div class="node-list" v-show="exps[0]">
+        <div class="node-item"
+          v-for="item in nodeList"
+          :key="item.text"
+          @mousedown="$_dragNode(item)">
+          <div class="node-item-icon" :class="item.class">
+            <div v-if="item.type === 'user' || item.type === 'time'" class="shape"></div>
+          </div>
+          <!-- <span class="node-label">{{item.text}}</span> -->
+        </div>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -18,38 +27,65 @@ export default {
     lf: Object,
     nodeList: Array,
   },
+  data () {
+    return {
+      exps: [false]
+    }
+  },
   methods: {
     $_dragNode (item) {
       this.$props.lf.dnd.startDrag({
         type: item.type,
       })
+    },
+    change (index) {
+      this.$set(this.exps, index, !this.exps[index])
     }
   }
 }
 </script>
-<style>
+<style scoped lang="less">
 .node-panel {
-  position: absolute;
-  top: 100px;
-  left: 50px;
-  width: 70px;
-  padding: 20px 10px;
-  background-color: white;
-  box-shadow: 0 0 10px 1px rgb(228, 224, 219);
-  border-radius: 6px;
-  text-align: center;
-  z-index: 101;
+  width: 160px;
+  // padding: 10px 0;
+  background-color: #FFF;
+  z-index: 2;
+  border-top: 1px solid #cbcccc;
+  .group-name {
+    display: flex;
+    // justify-content: center;
+    align-items: center;
+    background-color: #F3F3F3;
+    font-size: 12px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 8px;
+    border-bottom: 1px solid #CBCCCC;
+    cursor: pointer;
+    svg.exp {
+      transform: rotate(90deg);
+    }
+    span {
+      margin-left: 2px;
+    }
+  }
 }
-.node-item {
-  margin-bottom: 20px;
-  text-align: center;
+.node-list {
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fill, 30px);
+  grid-gap: 10px 5px;
+  padding: 5px 5px 5px 9px;
+  .node-item {
+    cursor: pointer;
+    .node-item-icon {
+      width: 30px;
+      height: 30px;
+      background-size: cover;
+    }
+  }
 }
-.node-item-icon {
-  width: 30px;
-  height: 30px;
-  margin: 0 auto;
-  background-size: cover;
-}
+
 .node-label {
   font-size: 12px;
   margin-top: 5px;
