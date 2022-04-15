@@ -10,4 +10,12 @@ import registerDownload from './registerDownload'
 import registerPolyline from './registerPolyline'
 import registerTask from './registerTask'
 import registerConnect from './registerConnect'
-export { registerStart, registerUser, registerEnd, registerPush, registerDownload, registerPolyline, registerTask, registerConnect }
+
+import ResizableRect from "./ResizableRect" // 矩形
+import ResizableDiamond from "./ResizableDiamond" // 菱形
+import ResizableEllipse from "./ResizableEllipse" // 圆形
+import ResizableHexagon from "./ResizableHexagon" // 六边形
+import ResizableTriangle from "./ResizableTriangle" // 三角形
+export { registerStart, registerUser, registerEnd, registerPush, registerDownload, registerPolyline, registerTask, registerConnect,
+  ResizableRect, ResizableDiamond, ResizableEllipse, ResizableHexagon, ResizableTriangle
+}

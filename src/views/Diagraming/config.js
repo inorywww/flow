@@ -1,38 +1,33 @@
 export const nodeList = [
-  {
-    text: '开始',
-    type: 'start',
-    class: 'node-start'
-  },
+  // {
+  //   text: '开始',
+  //   type: 'start',
+  //   class: 'node-start'
+  // },
   {
     text: '矩形',
-    type: 'rect',
-    class: 'node-rect'
+    type: 'resizable-rect',
+    class: 'icon-rect'
   },
   {
-    type: 'user',
-    text: '用户',
-    class: 'node-user'
+    text: '菱形',
+    type: 'resizable-diamond',
+    class: 'icon-diamond'
   },
   {
-    type: 'push',
-    text: '推送',
-    class: 'node-push'
+    text: '圆形',
+    type: 'resizable-ellipse',
+    class: 'icon-ellipse'
   },
   {
-    type: 'download',
-    text: '位置',
-    class: 'node-download'
+    text: '六边形',
+    type: 'resizable-hexagon',
+    class: 'icon-hexagon'
   },
   {
-    type: 'connect',
-    text: 'Html',
-    class: 'node-push'
-  },
-  {
-    type: 'end',
-    text: '结束',
-    class: 'node-end'
+    text: '三角形',
+    type: 'resizable-triangle',
+    class: 'icon-triangle'
   },
 ];
 

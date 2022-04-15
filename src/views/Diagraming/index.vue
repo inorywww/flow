@@ -49,7 +49,7 @@
 </template>
 <script>
 import LogicFlow from '@logicflow/core'
-import { Menu, Snapshot,BpmnElement } from '@logicflow/extension'
+import { Menu, Snapshot, BpmnElement } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 import NodePanel from './components/NodePanel.vue'
@@ -69,8 +69,15 @@ import {
   registerPolyline,
   registerTask,
   registerConnect,
+  ResizableRect,
+  ResizableDiamond,
+  ResizableEllipse,
+  ResizableHexagon,
+  ResizableTriangle,
 } from './registerNode'
-const demoData = {}
+const demoData = {
+  
+}
 // const demoData = `<bpmn:definitions id="Definitions_2ridhq5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0"> <bpmn:process id="Process_0gc60fc" isExecutable="false"> <bpmn:startEvent id="Event_2715eoc" name="开始"> <bpmn:outgoing>Flow_33j4jra</bpmn:outgoing></bpmn:startEvent> <bpmn:userTask id="Activity_06ejpb9" name="12122"> <bpmn:incoming>Flow_33j4jra</bpmn:incoming> <bpmn:outgoing>Flow_0std6pu</bpmn:outgoing></bpmn:userTask> <bpmn:userTask id="Activity_2isko2b" name="77777"> <bpmn:incoming>Flow_0std6pu</bpmn:incoming> <bpmn:outgoing>Flow_081nvcj</bpmn:outgoing></bpmn:userTask> <bpmn:endEvent id="Event_3o35ddb" name="结束"> <bpmn:incoming>Flow_081nvcj</bpmn:incoming></bpmn:endEvent> <bpmn:sequenceFlow id="Flow_33j4jra" sourceRef="Event_2715eoc" targetRef="Activity_06ejpb9"/> <bpmn:sequenceFlow id="Flow_0std6pu" sourceRef="Activity_06ejpb9" targetRef="Activity_2isko2b"/> <bpmn:sequenceFlow id="Flow_081nvcj" sourceRef="Activity_2isko2b" targetRef="Event_3o35ddb"/> </bpmn:process> <bpmndi:BPMNDiagram id="BPMNDiagram_1"> <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0gc60fc"> <bpmndi:BPMNEdge id="Flow_33j4jra_di" bpmnElement="Flow_33j4jra"> <di:waypoint x="318" y="220"/> <di:waypoint x="374" y="220"/> <di:waypoint x="374" y="240"/> <di:waypoint x="430" y="240"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_0std6pu_di" bpmnElement="Flow_0std6pu"> <di:waypoint x="530" y="240"/> <di:waypoint x="650" y="240"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_081nvcj_di" bpmnElement="Flow_081nvcj"> <di:waypoint x="750" y="240"/> <di:waypoint x="842" y="240"/> </bpmndi:BPMNEdge> <bpmndi:BPMNShape id="Event_2715eoc_di" bpmnElement="Event_2715eoc"> <dc:Bounds x="280" y="200" width="40" height="40"/> <bpmndi:BPMNLabel> <dc:Bounds x="290" y="213" width="20" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> <bpmndi:BPMNShape id="Activity_06ejpb9_di" bpmnElement="Activity_06ejpb9"> <dc:Bounds x="430" y="200" width="100" height="80"/> <bpmndi:BPMNLabel> <dc:Bounds x="455" y="233" width="50" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> <bpmndi:BPMNShape id="Activity_2isko2b_di" bpmnElement="Activity_2isko2b"> <dc:Bounds x="650" y="200" width="100" height="80"/> <bpmndi:BPMNLabel> <dc:Bounds x="675" y="233" width="50" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> <bpmndi:BPMNShape id="Event_3o35ddb_di" bpmnElement="Event_3o35ddb"> <dc:Bounds x="840" y="220" width="40" height="40"/> <bpmndi:BPMNLabel> <dc:Bounds x="850" y="233" width="20" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> </bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>`
 
 export default {
@@ -221,13 +228,18 @@ export default {
     // 自定义
     $_registerNode () {
       registerStart(this.lf)
-      registerUser(this.lf)
-      registerEnd(this.lf)
-      registerPush(this.lf, this.clickPlus, this.mouseDownPlus)
-      registerDownload(this.lf)
-      registerPolyline(this.lf)
-      registerTask(this.lf)
-      registerConnect(this.lf)
+      // registerUser(this.lf)
+      // registerEnd(this.lf)
+      // registerPush(this.lf, this.clickPlus, this.mouseDownPlus)
+      // registerDownload(this.lf)
+      // registerPolyline(this.lf)
+      // registerTask(this.lf)
+      // registerConnect(this.lf)
+      this.lf.register(ResizableRect)
+      this.lf.register(ResizableDiamond)
+      this.lf.register(ResizableEllipse)
+      this.lf.register(ResizableHexagon)
+      this.lf.register(ResizableTriangle)
       this.$_render()
     },
     $_render () {
