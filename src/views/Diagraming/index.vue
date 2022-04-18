@@ -1,362 +1,241 @@
 <template>
-  <div class="logic-flow-view">
-    <!-- 辅助工具栏 -->
-    <Control 
-      class="demo-control"
+  <div class="diagram">
+    <diagram-toolbar
       v-if="lf"
       :lf="lf"
-      @catData="$_catData"
-    ></Control>
-    
-    <!-- 画布 -->
-    <div id="container">
-      <!-- 节点面板 -->
-      <NodePanel v-if="lf" :lf="lf" :nodeList="nodeList"></NodePanel>
-      <div id="LF-view"></div>
+      :activeEdges="activeEdges"
+      @changeNodeFillColor="changeNodeFill"
+      @saveGraph="saveGraph"
+      @setStyle="setStyle"
+    />
+    <div class="diagram-main">
+      <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" />
+      <div class="diagram-container" ref="container">
+        <div class="diagram-wrapper">
+          <div class="lf-diagram" ref="diagram"></div>
+        </div>
+      </div>
     </div>
-    <!-- 用户节点自定义操作面板 -->
-    <AddPanel
-      v-if="showAddPanel"
-      class="add-panel"
-      :style="addPanelStyle"
-      :lf="lf"
-      :nodeData="addClickNode"
-      @addNodeFinish="hideAddPanel"
-      >
-    </AddPanel>
-    <!-- 属性面板 -->
-    <el-drawer
-      title="设置节点属性"
-      :visible.sync="dialogVisible"
-      direction="rtl"
-      size="500px"
-      :before-close="closeDialog">
-      <PropertyDialog
-        v-if="dialogVisible"
-        :nodeData="clickNode"
-        :lf="lf"
-        @setPropertiesFinish="closeDialog"
-      ></PropertyDialog>
-    </el-drawer>
-    <!-- 数据查看面板 -->
-    <el-dialog
-      title="数据"
-      :visible.sync="dataVisible"
-      width="50%">
-      <DataDialog :graphData="graphData"></DataDialog>
-    </el-dialog>
+    <!-- 右侧属性面板 -->
+    <PropertyPanel
+      class="diagram-panel"
+      v-if="activeNodes.length>0 || activeEdges.length > 0"
+      :onlyEdge="activeNodes.length === 0"
+      :elementsStyle="properties"
+      @setStyle="setStyle"
+      @setZIndex="setZIndex"
+    />
   </div>
 </template>
+
 <script>
 import LogicFlow from '@logicflow/core'
-import { Menu, Snapshot, BpmnElement } from '@logicflow/extension'
+import { SelectionSelect } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
-import NodePanel from './components/NodePanel.vue'
-import AddPanel from './components/AddPanel.vue'
-import Control from './components/Control.vue'
-import DataDialog from './components/DataDialog.vue'
-
-import PropertyDialog from './PropertySetting/PropertyDialog.vue'
-import { nodeList } from './config'
-
-import {
-  registerStart,
-  registerUser,
-  registerEnd,
-  registerPush,
-  registerDownload,
-  registerPolyline,
-  registerTask,
-  registerConnect,
-  ResizableRect,
-  ResizableDiamond,
-  ResizableEllipse,
-  ResizableHexagon,
-  ResizableTriangle,
-} from './registerNode'
-const demoData = {
-  
-}
-// const demoData = `<bpmn:definitions id="Definitions_2ridhq5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0"> <bpmn:process id="Process_0gc60fc" isExecutable="false"> <bpmn:startEvent id="Event_2715eoc" name="开始"> <bpmn:outgoing>Flow_33j4jra</bpmn:outgoing></bpmn:startEvent> <bpmn:userTask id="Activity_06ejpb9" name="12122"> <bpmn:incoming>Flow_33j4jra</bpmn:incoming> <bpmn:outgoing>Flow_0std6pu</bpmn:outgoing></bpmn:userTask> <bpmn:userTask id="Activity_2isko2b" name="77777"> <bpmn:incoming>Flow_0std6pu</bpmn:incoming> <bpmn:outgoing>Flow_081nvcj</bpmn:outgoing></bpmn:userTask> <bpmn:endEvent id="Event_3o35ddb" name="结束"> <bpmn:incoming>Flow_081nvcj</bpmn:incoming></bpmn:endEvent> <bpmn:sequenceFlow id="Flow_33j4jra" sourceRef="Event_2715eoc" targetRef="Activity_06ejpb9"/> <bpmn:sequenceFlow id="Flow_0std6pu" sourceRef="Activity_06ejpb9" targetRef="Activity_2isko2b"/> <bpmn:sequenceFlow id="Flow_081nvcj" sourceRef="Activity_2isko2b" targetRef="Event_3o35ddb"/> </bpmn:process> <bpmndi:BPMNDiagram id="BPMNDiagram_1"> <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0gc60fc"> <bpmndi:BPMNEdge id="Flow_33j4jra_di" bpmnElement="Flow_33j4jra"> <di:waypoint x="318" y="220"/> <di:waypoint x="374" y="220"/> <di:waypoint x="374" y="240"/> <di:waypoint x="430" y="240"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_0std6pu_di" bpmnElement="Flow_0std6pu"> <di:waypoint x="530" y="240"/> <di:waypoint x="650" y="240"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_081nvcj_di" bpmnElement="Flow_081nvcj"> <di:waypoint x="750" y="240"/> <di:waypoint x="842" y="240"/> </bpmndi:BPMNEdge> <bpmndi:BPMNShape id="Event_2715eoc_di" bpmnElement="Event_2715eoc"> <dc:Bounds x="280" y="200" width="40" height="40"/> <bpmndi:BPMNLabel> <dc:Bounds x="290" y="213" width="20" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> <bpmndi:BPMNShape id="Activity_06ejpb9_di" bpmnElement="Activity_06ejpb9"> <dc:Bounds x="430" y="200" width="100" height="80"/> <bpmndi:BPMNLabel> <dc:Bounds x="455" y="233" width="50" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> <bpmndi:BPMNShape id="Activity_2isko2b_di" bpmnElement="Activity_2isko2b"> <dc:Bounds x="650" y="200" width="100" height="80"/> <bpmndi:BPMNLabel> <dc:Bounds x="675" y="233" width="50" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> <bpmndi:BPMNShape id="Event_3o35ddb_di" bpmnElement="Event_3o35ddb"> <dc:Bounds x="840" y="220" width="40" height="40"/> <bpmndi:BPMNLabel> <dc:Bounds x="850" y="233" width="20" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNShape> </bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>`
+import DiagramToolbar from './components/DiagramToolbar.vue'
+import DiagramSidebar from './components/DiagramSidebar.vue'
+import PropertyPanel from './components/PropertyPanel.vue'
+import { registerCustomElement } from './node'
 
 export default {
-  name: 'diagraming',
-  components: { NodePanel, AddPanel, Control, PropertyDialog, DataDialog },
+  name: 'Diagram',
   data () {
     return {
-      lf: null,
-      showAddPanel: false,
-      addPanelStyle: {
-        top: 0,
-        left: 0
-      },
-      nodeData: null,
-      addClickNode: null,
-      clickNode: null,
-      dialogVisible: false,
-      graphData: null,
-      dataVisible: false,
-      config: {
-        background: {
-          color: '#f7f9ff'
-        },
-        grid: {
-          size: 10,
-          visible: true
-        },
-        keyboard: {
-          enabled: true
-        },
-        style: {
-          rect: {
-            radius: 6,
-          },
-          edgeText: { // 边文本样式
-            background: {
-              fill: '#fff'
-            }
-          },
-        },
-        edgeTextDraggable: true,
-        guards: {
-          beforeClone (data) {
-            console.log('beforeClone', data)
-            return true
-          },
-          beforeDelete (data) {
-            // 可以根据data数据判断是否允许删除，允许返回true,不允许返回false
-            // 文档： http://logic-flow.org/guide/basic/keyboard.html#%E5%A6%82%E4%BD%95%E9%98%BB%E6%AD%A2%E5%88%A0%E9%99%A4%E6%88%96%E8%80%85%E6%8B%B7%E8%B4%9D%E8%A1%8C%E4%B8%BA
-            console.log('beforeDelete', data)
-            // _this.$message('不允许删除', 'error')
-            return true
-          }
-        }
-      },
-      moveData: {},
-      nodeList,
+      sidebarWidth: 200,
+      diagramWidth: 0,
+      diagramHeight: 0,
+      lf: '',
+      filename: '',
+      activeNodes: [],
+      activeEdges: [],
+      properties: {}
     }
   },
   mounted () {
-    this.$_initLf()
+    let data = ''
+    if (window.location.search) {
+      const query = window.location.search.substring(1).split('&').reduce((map, kv) => {
+        const [key, value] = kv.split('=')
+        map[key] = value
+        return map
+      }, {})
+      this.filename = query.filename
+      const d = window.sessionStorage.getItem(this.filename)
+      if (d) {
+        data = JSON.parse(d)
+      }
+    }
+    this.initLogicFlow(data)
   },
   methods: {
-    $_initLf () {
-      // 画布配置
-      // 使用插件
-      LogicFlow.use(Menu)
-      LogicFlow.use(Snapshot)
-      LogicFlow.use(BpmnElement);
-      // LogicFlow.use(BpmnXmlAdapter);
-      const lf = new LogicFlow({...this.config, container: document.querySelector('#LF-view'),})
-      this.lf = lf
-      // lf.setDefaultEdgeType('bpmn:sequenceFlow');
-      // 菜单配置文档：http://logic-flow.org/guide/extension/extension-components.html#%E8%8F%9C%E5%8D%95
-      // 重置，增加，节点自由配置(以user节点为示例)
-      lf.setMenuConfig({
-        nodeMenu: [],
-        edgeMenu: []
-      })
-      lf.addMenuConfig({
-        nodeMenu: [
-          {
-            text: '分享',
-            callback () {
-              alert('分享成功！')
-            }
-          },
-          {
-            text: '属性',
-            callback (node) {
-              alert(`
-                节点id：${node.id}
-                节点类型：${node.type}
-                节点坐标：(x: ${node.x}, y: ${node.y})`
-              )
-            }
-          }
-        ],
-        edgeMenu: [
-          {
-            text: '属性',
-            callback (edge) {
-              alert(`
-                边id：${edge.id}
-                边类型：${edge.type}
-                边坐标：(x: ${edge.x}, y: ${edge.y})
-                源节点id：${edge.sourceNodeId}
-                目标节点id：${edge.targetNodeId}`
-              )
-            }
-          }
-        ]
-      })
-      // 设置主题
-      lf.setTheme({
-        circle: {
-          r: 20,
-          stroke: '#000000',
-          outlineColor: '#88f',
-          strokeWidth: 1
+    initLogicFlow (data) {
+      // 引入框选插件
+      LogicFlow.use(SelectionSelect)
+      const lf = new LogicFlow({
+        container: this.$refs.diagram,
+        overlapMode: 1,
+        autoWrap: true,
+        metaKeyMultipleSelected: true,
+        keyboard: {
+          enabled: true
         },
-        rect: {
-          outlineColor: '#88f',
-          strokeWidth: 1
+        grid: {
+          visible: false,
+          size: 5
         },
-        polygon: {
-          strokeWidth: 1
-        },
-        polyline: {
-          stroke: '#000000',
-          hoverStroke: '#000000',
-          selectedStroke: '#000000',
-          outlineColor: '#88f',
-          strokeWidth: 1
-        },
-        nodeText: {
-          color: '#000000'
-        },
-        edgeText: {
-          color: '#000000',
-          background: {
-            fill: '#f7f9ff'
-          }
+        background: {
+          backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2QwZDBkMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDBkMGQwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=")',
+          backgroundRepeat: 'repeat'
         }
       })
-      this.$_registerNode()
-    },
-    // 自定义
-    $_registerNode () {
-      registerStart(this.lf)
-      // registerUser(this.lf)
-      // registerEnd(this.lf)
-      // registerPush(this.lf, this.clickPlus, this.mouseDownPlus)
-      // registerDownload(this.lf)
-      // registerPolyline(this.lf)
-      // registerTask(this.lf)
-      // registerConnect(this.lf)
-      this.lf.register(ResizableRect)
-      this.lf.register(ResizableDiamond)
-      this.lf.register(ResizableEllipse)
-      this.lf.register(ResizableHexagon)
-      this.lf.register(ResizableTriangle)
-      this.$_render()
-    },
-    $_render () {
-      this.lf.render(demoData)
-      this.$_LfEvent()
-    },
-    $_getData () {
-      const data = this.lf.getGraphData()
-    },
-    $_LfEvent () {
-      this.lf.on('node:click', ({data}) => {
-        console.log('node:click', data)
-        // this.$data.clickNode = data
-        // this.$data.dialogVisible = true
-      })
-      this.lf.on('edge:click', ({data}) => {
-        console.log('edge:click', data)
-        // this.$data.clickNode = data
-        // this.$data.dialogVisible = true
-      })
-      this.lf.on('element:click', () => {
-        this.hideAddPanel()
-      })
-      this.lf.on('edge:add', ({data}) => {
-        console.log('edge:add', data)
-      })
-      this.lf.on('node:mousemove', ({data}) => {
-        console.log('node:mousemove')
-        this.moveData = data
-      })
-      this.lf.on('blank:click', () => {
-        this.hideAddPanel()
-      })
-      this.lf.on('connection:not-allowed', (data) => {
-        this.$message({
-          type: 'error',
-          message: data.msg
+      lf.setTheme(
+        {
+          baseEdge: { strokeWidth: 1 },
+          baseNode: { strokeWidth: 1 },
+          nodeText: { overflowMode: 'autoWrap', lineHeight: 1.5 },
+          edgeText: { overflowMode: 'autoWrap', lineHeight: 1.5 }
+        }
+      )
+      // 注册自定义元素
+      registerCustomElement(lf)
+      lf.setDefaultEdgeType('pro-polyline')
+      lf.render(data)
+      this.lf = lf
+      this.lf.on('selection:selected, node:click, blank:click, edge:click', () => {
+        this.$nextTick(() => {
+          const { nodes, edges } = this.lf.getSelectElements()
+          console.log(nodes);
+          this.$set(this, 'activeNodes', nodes)
+          this.activeNodes = nodes
+          this.activeEdges = edges
+          this.getProperty()
         })
       })
-      this.lf.on('node:mousemove', () => {
-        console.log('on mousemove')
+    },
+    // 获取可以进行设置的属性
+    getProperty () {
+      let properties = {}
+      const { nodes, edges } = this.lf.getSelectElements()
+      nodes.forEach(node => {
+        properties = { ...properties, ...node.properties }
+      })
+      edges.forEach(edge => {
+        properties = { ...properties, ...edge.properties }
+      })
+      this.properties = properties
+      return properties
+    },
+    dragInNode (type) {
+      this.lf.dnd.startDrag({
+        type
       })
     },
-    clickPlus (e, attributes) {
-      e.stopPropagation()
-      console.log('clickPlus', e, attributes)
-      const { clientX, clientY } = e
-      console.log(clientX, clientY)
-      this.$data.addPanelStyle.top = (clientY - 40) + 'px'
-      this.$data.addPanelStyle.left = clientX + 'px'
-      this.$data.showAddPanel = true
-      this.$data.addClickNode = attributes
+    changeNodeFill (color) {
+      const { nodes } = this.lf.graphModel.getSelectElements()
+      nodes.forEach(({ id }) => {
+        this.lf.setProperties(id, {
+          fill: color
+        })
+      })
     },
-    mouseDownPlus (e, attributes) {
-      e.stopPropagation()
-      console.log('mouseDownPlus', e, attributes)
+    setStyle (item) {
+      this.activeNodes.forEach(({ id }) => {
+        this.lf.setProperties(id, item)
+      })
+      this.activeEdges.forEach(({ id }) => {
+        this.lf.setProperties(id, item)
+      })
+      this.getProperty()
     },
-    hideAddPanel () {
-      this.$data.showAddPanel = false
-      this.$data.addPanelStyle.top = 0
-      this.$data.addPanelStyle.left = 0
-      this.$data.addClickNode = null
+    setZIndex (type) {
+      this.activeNodes.forEach(({ id }) => {
+        this.lf.setElementZIndex(id, type)
+      })
+      this.activeEdges.forEach(({ id }) => {
+        this.lf.setElementZIndex(id, type)
+      })
     },
-    closeDialog () {
-      this.$data.dialogVisible = false
+    saveGraph () {
+      const data = this.lf.getGraphData()
+      this.download(this.filename, JSON.stringify(data))
     },
-    $_catData(){
-      this.$data.graphData = this.$data.lf.getGraphData();
-      console.log(this.$data.lf,'this.$data.lf')
-      console.log(this.$data.graphData,'this.$data.graphData')
-      this.$data.dataVisible = true;
-    },
+    download (filename, text) {
+      window.sessionStorage.setItem(filename, text)
+      const element = document.createElement('a')
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+      element.setAttribute('download', filename)
+      element.style.display = 'none'
+      document.body.appendChild(element)
+      element.click()
+      document.body.removeChild(element)
+    }
+  },
+  components: {
+    DiagramToolbar,
+    DiagramSidebar,
+    PropertyPanel
   }
 }
 </script>
-<style>
-.logic-flow-view {
+
+<style scoped>
+.diagram {
+  width: 100vw;
   height: 100vh;
   position: relative;
 }
-.demo-title{
-  text-align: center;
-  margin: 20px;
-}
-.demo-control{
-  /* position: absolute;
-  top: 50px;
-  right: 50px; */
-  z-index: 2;
-  /* border-bottom: 1px solid #cbcccc; */
-}
-#container {
-  width: 100vw;
-  height: 100vh;
+.diagram-main {
   display: flex;
-
+  width: 100%;
+  height: 100%;
 }
-#LF-view{
-  flex: 1;
-  width: 0;
-  outline: none;
-  border: 1px solid #cbcccc;
+.diagram-sidebar {
+  width: 185px;
+  height: calc(100% - 40px);
+  border-right: 1px solid #dadce0;
+  padding: 10px;
 }
-.time-plus{
-  cursor: pointer;
-}
-.add-panel {
+.diagram-panel {
+  width: 300px;
+  background: #fff;
+  height: calc(100% - 40px);
   position: absolute;
-  z-index: 11;
-  background-color: white;
-  padding: 10px 5px;
+  right: 0px;
+  top: 40px;
+  border-left: 1px solid #dadce0;
 }
-.el-drawer__body {
-  height: 80%;
-  overflow: auto;
-  margin-top: -30px;
-  z-index: 3;
+.diagram-container {
+  flex: 1;
+}
+/* 由于背景图和gird不对齐，需要css处理一下 */
+.diagram /deep/ .lf-background {
+  left: -9px;
+}
+.diagram-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+.lf-diagram {
+  box-shadow: 0px 0px 4px #838284;
+  width: 100%;
+  height: 100%;
+}
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+  background: white;
+  border-left: 1px solid #e8e8e8;
+}
+::-webkit-scrollbar-thumb {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #fff;
+  border-radius: 6px;
+  background: #c9c9c9;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b5b5b5;
 }
 </style>
-
