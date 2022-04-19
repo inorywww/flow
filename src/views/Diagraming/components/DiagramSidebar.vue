@@ -1,7 +1,7 @@
 <template>
   <div class="diagram-sidebar">
     <div>
-      <h1 class="node-category-title">General</h1>
+      <h1 class="node-category-title">基础图形</h1>
       <div class="node-category">
         <div class="node-item" @mousedown="dragInNode('pro-circle')">
           <icon-circle class="svg-node" />
@@ -51,9 +51,6 @@
         <div class="node-item" @mousedown="dragInNode('vertical-arrow')">
           <icon-vertical-arrow class="svg-node" />
         </div>
-        <!-- <div class="node-item" @mousedown="dragInNode('star')">
-          star
-        </div> -->
         <div class="node-item" @mousedown="dragInNode('pentagon')">
           <icon-pentagon class="svg-node" />
         </div>
@@ -81,20 +78,6 @@
         <div class="node-item" @mousedown="dragInNode('divide')">
           <icon-divide class="svg-node" />
         </div>
-      </div>
-    </div>
-    <div>
-      <h1 class="node-category-title">图片</h1>
-      <div class="image-node image-setting" @mousedown="dragInNode('image-setting')">
-      </div>
-      <div class="image-node image-user" @mousedown="dragInNode('image-user')">
-      </div>
-      <div class="image-node image-cloud" @mousedown="dragInNode('image-cloud')">
-      </div>
-    </div>
-    <div>
-      <h1 class="node-category-title">ICON</h1>
-      <div class="icon-node icon-message" @mousedown="dragInNode('icon-message')">
       </div>
     </div>
   </div>

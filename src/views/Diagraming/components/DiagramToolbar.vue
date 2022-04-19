@@ -1,30 +1,30 @@
 <template>
   <div class="toolbar">
     <div class="toolbar-item" @click="zoomIn()">
-      <el-tooltip content="放大" placement="bottom">
+      <el-tooltip content="放大">
         <zoom-in size="18" />
       </el-tooltip>
     </div>
     <div class="toolbar-item" @click="zoomOut()">
-      <el-tooltip content="缩小" placement="bottom">
+      <el-tooltip content="缩小">
         <zoom-out size="18" />
       </el-tooltip>
     </div>
     <div class="divider"></div>
 
     <div class="toolbar-item" @click="undo()">
-      <el-tooltip :class="{'disabled': !undoAble}" content="撤销（Ctrl+Z）" placement="bottom">
+      <el-tooltip :class="{'disabled': !undoAble}" content="撤销（Ctrl+Z）">
         <step-back size="18" />
       </el-tooltip>
     </div>
     <div class="toolbar-item" @click="redo()">
-      <el-tooltip :class="{'disabled': !redoAble}" content="恢复（Ctrl+Y）" placement="bottom">
+      <el-tooltip :class="{'disabled': !redoAble}" content="恢复（Ctrl+Y）">
         <step-forward size="18" />
       </el-tooltip>
     </div>
     <div class="divider"></div>
 
-    <el-tooltip style="max-width: 120px" class="tool-group" :class="{'disabled': !undoAble}" content="字体样式" placement="bottom">
+    <el-tooltip style="max-width: 120px" class="tool-group" :class="{'disabled': !undoAble}" content="字体样式">
       <el-select v-model="style.fontFamily" size="small" @change="changeFontFamily">
         <el-option
           v-for="(fontFamily, index) in fontFamilies"
@@ -35,7 +35,7 @@
     </el-tooltip>
     <div class="divider"></div>
 
-    <el-tooltip style="max-width: 80px" content="字体大小(px)" placement="bottom">
+    <el-tooltip style="max-width: 80px" content="字体大小(px)">
       <el-input-number
         v-model="style.fontSize"
         controls-position="right"
@@ -47,8 +47,24 @@
     </el-tooltip>
     <div class="divider"></div>
 
+    <div class="toolbar-item" @click="changeFontWeight" :class="{'selected': style.fontWeight === 'bold'}">
+      <el-tooltip content="粗体（Ctrl+B）" style="position: relative; top: 3px;">
+        <icon-blod size="21" />
+      </el-tooltip>
+    </div>
+    <div class="toolbar-item" @click="changeFontStyle" :class="{'selected': style.fontStyle === 'italic'}">
+      <el-tooltip content="斜体（Ctrl+I）" style="position: relative; top: 2px;">
+        <icon-bevel size="18"/>
+      </el-tooltip>
+    </div>
+    <div class="toolbar-item" @click="changeTextDecoration" :class="{'selected': style.textDecoration === 'underline'}">
+      <el-tooltip content="下划线（Ctrl+U）" style="position: relative; top: 3px;">
+        <underline size="17" />
+      </el-tooltip>
+    </div>
+
     <div class="toolbar-item">
-      <el-tooltip content="文本颜色" placement="bottom">
+      <el-tooltip content="文本颜色">
         <el-popover
           placement="top"
           width="220"
@@ -59,39 +75,52 @@
         </el-popover>
       </el-tooltip>
     </div>
-
-    <div class="toolbar-item">
-      <el-tooltip content="填充颜色" placement="bottom" style="position: relative; top: 3px;">
-        <el-popover
-          placement="top"
-          width="220"
-          trigger="click"
-        >
-          <sketch-picker :value="fillColor" @input="(c) => changeColorProperty(c, 'backgroundColor')"/>
-          <color-fill size="20" slot="reference"  :color="style.backgroundColor"/>
-        </el-popover>
-      </el-tooltip>
-    </div>
-
-    <div class="toolbar-item" @click="changeFontWeight" :class="{'selected': style.fontWeight === 'bold'}">
-      <el-tooltip content="粗体（Ctrl+B）" placement="bottom" style="position: relative; top: 3px;">
-        <icon-blod size="21" />
-      </el-tooltip>
-    </div>
-    
-    <div class="toolbar-item" @click="changeTextDecoration" :class="{'selected': style.textDecoration === 'underline'}">
-      <el-tooltip content="下划线（Ctrl+U）" placement="bottom" style="position: relative; top: 3px;">
-        <underline size="17" />
-      </el-tooltip>
-    </div>
-    <div class="toolbar-item">
-      <icon-line size="18" />
-    </div>
+    <div class="divider"></div>
     
     <!-- <div>
       <button @click="saveGraph">保存</button>
     </div> -->
-    <div>
+    <div class="toolbar-item">
+      <el-tooltip content="填充颜色" style="position: relative; top: 3px;">
+        <el-popover
+          width="220"
+          trigger="click"
+        >
+          <sketch-picker :value="fillColor" @input="(c) => changeColorProperty(c, 'backgroundColor')"/>
+          <color-fill size="22" slot="reference"  :color="style.backgroundColor"/>
+        </el-popover>
+      </el-tooltip>
+    </div>
+    <div class="toolbar-item">
+      <el-tooltip content="线条颜色" style="position: relative; top: 2px;">
+        <el-popover
+          width="220"
+          trigger="click"
+        >
+          <sketch-picker :value="fillColor" @input="(c) => changeColorProperty(c, 'borderColor')"/>
+          <color-border size="30" slot="reference"  :color="style.borderColor"/>
+        </el-popover>
+      </el-tooltip>
+    </div>
+    <el-tooltip style="max-width: 120px" class="tool-group" content="线宽">
+      <el-select v-model="style.borderWidth" size="small" @change="changeBorderWidth">
+        <el-option v-for="item in borderWidthOptions" :key="item" :label="`${item}px`" :value="item"></el-option>
+      </el-select>
+    </el-tooltip>
+    <el-tooltip style="max-width: 120px;margin-left: 4px" class="tool-group" content="线条样式">
+      <el-select v-model="style.borderStyle" size="small" @change="selectBorder">
+        <el-option value="hidden" label="不显示"></el-option>
+        <el-option
+          v-for="(border, index) in borderStyles"
+          :value="border.value"
+          :key="index"
+        >
+          <div class="border-style" :style="{'borderBottomStyle': border.value}"></div>
+        </el-option>
+      </el-select>
+    </el-tooltip>
+    <div class="divider"></div>
+    <el-tooltip content="连线类型" style="max-width: 120px; margin-left: 4px">
       <el-select v-model="linetype" size="mini" @change="changeLineType">
         <el-option
           v-for="item in lineOptions"
@@ -100,23 +129,27 @@
           :label="item.label"
         ></el-option>
       </el-select>
-    </div>
+    </el-tooltip>
   </div>
 </template>
 
 <script>
-import StepBack from '../icons/StepBack.vue'
-import StepForward from '../icons/StepForward.vue'
+import ZoomIn from '../icons/ZoomIn.vue' // 放大
+import ZoomOut from '../icons/ZoomOut.vue' // 缩小
+
+import StepBack from '../icons/StepBack.vue' // 后退
+import StepForward from '../icons/StepForward.vue' // 前进
 
 import { Sketch } from 'vue-color'
-import ColorFill from '../icons/ColorFill.vue'
-import ColorText from '../icons/ColorText.vue'
-import IconFont from '../icons/Font.vue'
-import IconBlod from '../icons/Blod.vue'
-import IconLine from '../icons/Line.vue'
-import ZoomIn from '../icons/ZoomIn.vue'
-import ZoomOut from '../icons/ZoomOut.vue'
-import Underline from '../icons/Underline.vue'
+
+import IconBlod from '../icons/Blod.vue' // 粗体
+import IconBevel from '../icons/Bevel.vue' // 斜体
+import Underline from '../icons/Underline.vue' // 下划线
+import ColorText from '../icons/ColorText.vue' // 字体颜色
+
+import ColorFill from '../icons/ColorFill.vue' // 填充颜色
+import ColorBorder from '../icons/ColorBorder.vue' // 边框颜色
+import BorderWidth from '../icons/BorderWidth.vue' // 边框宽度
 import { shortStyles, borderStyles, fontFamilies } from '../constant'
 
 export default {
@@ -149,6 +182,7 @@ export default {
           label: '曲线'
         }
       ],
+      borderWidthOptions: Array(11).fill().map((_, i) => i),
       style: {
         backgroundColor: '#333333', // 填充色
         gradientColor: '', // 渐变色
@@ -160,6 +194,7 @@ export default {
         fontColor: '#333333', // 文本颜色
         fontWeight: 'normal', // 文本加粗
         fontFamily: 'Arial', // 文本样式
+        fontStyle: 'normal', // 斜体
         lineHeight: '', // 行高
         textAlign: '', // 对齐
         textDecoration: 'none', // 下划线
@@ -229,19 +264,20 @@ export default {
     },
     changeFontWeight () {
       this.style.fontWeight = this.style.fontWeight === 'bold' ? 'normal' : 'bold'
-      // if (this.style.fontWeight === 'bold') {
-      //   this.style.fontWeight = 'normal'
-      //   this.$emit('setStyle', {
-      //     fontWeight: 'normal'
-      //   })
-      // } else {
-      //   this.$emit('setStyle', {
-      //     fontWeight: 'bold'
-      //   })
-      // }
       this.$emit('setStyle', {
-          fontWeight: this.style.fontWeight
-        })
+        fontWeight: this.style.fontWeight
+      })
+    },
+    changeFontStyle () {
+      this.style.fontStyle = this.style.fontStyle === 'italic' ? 'normal' : 'italic'
+      this.$emit('setStyle', {
+        fontStyle: this.style.fontStyle
+      })
+    },
+    changeBorderWidth (val) {
+      this.$emit('setStyle', {
+        borderWidth: val
+      })
     },
     changeLineType(value) {
       const {lf, activeEdges} = this.$props
@@ -257,14 +293,15 @@ export default {
   components: {
     ColorFill,
     ColorText,
-    IconFont,
+    ColorBorder,
     IconBlod,
-    IconLine,
+    IconBevel,
     ZoomIn,
     ZoomOut,
     StepBack,
     StepForward,
-    Underline, 
+    Underline,
+    BorderWidth,
     SketchPicker: Sketch
   }
 }
@@ -310,6 +347,13 @@ export default {
   &.disabled {
 
   }
+}
+.border-style {
+  width: 150px;
+  height: 0px;
+  margin-top: 18px;
+  border-bottom-width: 1px;
+  border-bottom-color: black;
 }
 .toolbar-color-picker {
   width: 24px;
