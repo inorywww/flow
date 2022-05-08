@@ -1,8 +1,8 @@
-import { LineEdge, LineEdgeModel } from '@logicflow/core'
-import { getShapeStyleFuction, getTextStyleFunction } from '../getShapeStyleUtil'
+import { BezierEdge, BezierEdgeModel } from '@logicflow/core'
+import { getShapeStyleFuction, getTextStyleFunction } from '../../getShapeStyleUtil'
 
-// 直线
-class Model extends LineEdgeModel {
+// 贝塞尔曲线
+class Model extends BezierEdgeModel {
   constructor (data, graphModel) {
     super(data, graphModel)
     this.strokeWidth = 1
@@ -20,7 +20,7 @@ class Model extends LineEdgeModel {
   }
 }
 export default {
-  type: 'pro-line',
-  view: LineEdge,
+  type: 'pro-bezier',
+  view: BezierEdge,
   model: Model
 }

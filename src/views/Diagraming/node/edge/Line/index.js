@@ -1,8 +1,8 @@
-import { PolylineEdge, PolylineEdgeModel } from '@logicflow/core'
-import { getShapeStyleFuction, getTextStyleFunction } from '../getShapeStyleUtil'
+import { LineEdge, LineEdgeModel } from '@logicflow/core'
+import { getShapeStyleFuction, getTextStyleFunction } from '../../getShapeStyleUtil'
 
- // 折线
-class Model extends PolylineEdgeModel {
+// 直线
+class Model extends LineEdgeModel {
   constructor (data, graphModel) {
     super(data, graphModel)
     this.strokeWidth = 1
@@ -20,7 +20,7 @@ class Model extends PolylineEdgeModel {
   }
 }
 export default {
-  type: 'pro-polyline',
-  view: PolylineEdge,
+  type: 'pro-line',
+  view: LineEdge,
   model: Model
 }

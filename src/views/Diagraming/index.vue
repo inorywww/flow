@@ -31,6 +31,7 @@
 <script>
 import LogicFlow from '@logicflow/core'
 import { SelectionSelect } from '@logicflow/extension'
+import { Menu } from '@logicflow/extension'
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 import DiagramToolbar from './components/DiagramToolbar.vue'
@@ -72,6 +73,7 @@ export default {
     initLogicFlow (data) {
       // 引入框选插件
       LogicFlow.use(SelectionSelect)
+      LogicFlow.use(Menu)
       const lf = new LogicFlow({
         container: this.$refs.diagram,
         overlapMode: 1,
@@ -89,6 +91,7 @@ export default {
           backgroundRepeat: 'repeat'
         }
       })
+      this.initMenu(lf)
       lf.setTheme(
         {
           baseEdge: { strokeWidth: 1 },
@@ -99,18 +102,83 @@ export default {
       )
       // 注册自定义元素
       registerCustomElement(lf)
-      lf.setDefaultEdgeType('pro-polyline')
+      lf.setDefaultEdgeType('fill-triangle-polyline')
       lf.render(data)
       this.lf = lf
       this.lf.on('selection:selected, node:click, blank:click, edge:click', () => {
         this.$nextTick(() => {
           const { nodes, edges } = this.lf.getSelectElements()
-          console.log(nodes);
-          this.$set(this, 'activeNodes', nodes)
           this.activeNodes = nodes
           this.activeEdges = edges
           this.getProperty()
         })
+      })
+      this.lf.on('blank:click', () => {
+        console.log('blank:click');
+      })
+      this.lf.on('node:contextmenu', obj => {
+        console.log(obj);
+      })
+    },
+    // 初始化右键菜单
+    initMenu (lf) {
+      const _this = this
+      lf.extension.menu.addMenuConfig({
+        nodeMenu: [
+          {
+            text: '上移一层',
+            callback () {
+              _this.setZIndex('top')
+            }
+          },
+          {
+            text: '下移一层',
+            callback () {
+              _this.setZIndex('bottom')
+            }
+          },
+          {
+            text: '置于顶层',
+            callback () {
+              _this.setZIndex('top')
+            }
+          },
+          {
+            text: '置于底层',
+            callback () {
+              _this.setZIndex('bottom')
+            }
+          },
+          {
+            text: '剪切',
+            callback (node) {
+              console.log(node);
+              
+            },
+          },
+        ],
+        edgeMenu: [
+          {
+            text: '属性',
+            callback (edge) {
+              alert(`
+                边id：${edge.id}
+                边类型：${edge.type}
+                边坐标：(x: ${edge.x}, y: ${edge.y})
+                源节点id：${edge.sourceNodeId}
+                目标节点id：${edge.targetNodeId}`
+              );
+            },
+          },
+        ],
+        graphMenu: [
+          {
+            text: '分享',
+            callback () {
+              alert('分享成功！');
+            }
+          },
+        ],
       })
     },
     // 获取可以进行设置的属性

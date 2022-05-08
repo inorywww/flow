@@ -34,9 +34,14 @@ import ImageCloud from './image/Cloud'
 // image绘制左上角icon节点
 import IconMessage from './icon/Message'
 // 注册边
-import Ployline from './edge/Polyline'
-import Line from './edge/Line'
-import Bezier from './edge/Bezier'
+import FillTrianglePolyline from './edge/Polyline/index'
+import EmptyTrianglePolyline from './edge/Polyline/EmptyTrianglePolyline'
+import FillCirclePolyline from './edge/Polyline/FillCirclePolyline'
+import EmptyCirclePolyline from './edge/Polyline/EmptyCirclePolyline'
+import FillDiamondPolyline from './edge/Polyline/FillDiamondPolyline'
+import EmptyDiamondPolyline from './edge/Polyline/EmptyDiamondPolyline'
+import Line from './edge/Line/index'
+import Bezier from './edge/Bezier/index'
 
 export const registerCustomElement = (lf) => {
   // 注册基础图形
@@ -75,7 +80,12 @@ export const registerCustomElement = (lf) => {
   // 注册image绘制左上角icon节点
   lf.register(IconMessage)
   // 注册边
-  lf.register(Ployline)
+  lf.register(FillTrianglePolyline)
+  lf.register(EmptyTrianglePolyline)
+  lf.register(FillCirclePolyline)
+  lf.register(EmptyCirclePolyline)
+  lf.register(FillDiamondPolyline)
+  lf.register(EmptyDiamondPolyline)
   lf.register(Line)
   lf.register(Bezier)
 }

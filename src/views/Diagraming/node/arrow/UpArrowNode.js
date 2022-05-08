@@ -36,7 +36,7 @@ class UpArrowView extends RectNode.view {
     }
     
     return h('g', {}, [
-       h('polygon', { ...attrs })
+      h('polygon', { ...attrs })
     ]
     );
   }

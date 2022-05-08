@@ -1,8 +1,11 @@
 <template>
   <div class="diagram-sidebar">
     <div>
-      <h1 class="node-category-title">基础图形</h1>
-      <div class="node-category">
+      <h1 class="node-group-title">基础图形</h1>
+      <div class="node-group">
+        <div class="node-item" @mousedown="dragInNode('pro-text')">
+          <icon-text class="svg-node" />
+        </div>
         <div class="node-item" @mousedown="dragInNode('pro-circle')">
           <icon-circle class="svg-node" />
         </div>
@@ -30,9 +33,7 @@
         <div class="node-item" @mousedown="dragInNode('parallelogram')">
           <icon-parallelogram class="svg-node" />
         </div>
-        <div class="node-item" @mousedown="dragInNode('pro-text')">
-          <icon-text class="svg-node" />
-        </div>
+        
         <div class="node-item" @mousedown="dragInNode('left-arrow')">
           <icon-left-arrow class="svg-node"/>
         </div>
@@ -151,7 +152,7 @@ export default {
 .diagram-sidebar {
   user-select: none;
 }
-.node-category-title {
+.node-group-title {
   margin: 0;
   font-size: 14px;
   display: block;
@@ -165,7 +166,7 @@ export default {
   margin-right: 5px;
   display: inline-block;
 }
-.node-category {
+.node-group {
   border-bottom: 1px solid #e5e5e5;
 }
 .svg-node {

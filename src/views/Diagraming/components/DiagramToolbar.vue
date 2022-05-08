@@ -102,12 +102,12 @@
         </el-popover>
       </el-tooltip>
     </div>
-    <el-tooltip style="max-width: 120px" class="tool-group" content="线宽">
+    <el-tooltip style="max-width: 100px" class="tool-group" content="线宽">
       <el-select v-model="style.borderWidth" size="small" @change="changeBorderWidth">
         <el-option v-for="item in borderWidthOptions" :key="item" :label="`${item}px`" :value="item"></el-option>
       </el-select>
     </el-tooltip>
-    <el-tooltip style="max-width: 120px;margin-left: 4px" class="tool-group" content="线条样式">
+    <el-tooltip style="max-width: 100px;margin-left: 4px" class="tool-group" content="线条样式">
       <el-select v-model="style.borderStyle" size="small" @change="selectBorder">
         <el-option value="hidden" label="不显示"></el-option>
         <el-option
@@ -120,14 +120,30 @@
       </el-select>
     </el-tooltip>
     <div class="divider"></div>
-    <el-tooltip content="连线类型" style="max-width: 120px; margin-left: 4px">
-      <el-select v-model="linetype" size="mini" @change="changeLineType">
+    <el-tooltip content="连线类型" style="max-width: 80px; margin-left: 4px">
+      <el-select v-model="linetype.desc" size="mini" @change="changeLineType">
         <el-option
           v-for="item in lineOptions"
           :key="item.value"
           :value="item.value"
           :label="item.label"
-        ></el-option>
+          class="option-item"
+        >
+          <img :src="item.img">
+        </el-option>
+      </el-select>
+    </el-tooltip>
+    <el-tooltip content="终点" style="max-width: 120px; margin-left: 4px">
+      <el-select v-model="pointtype.desc" size="mini" @change="changePoint">
+        <el-option
+          v-for="item in points"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+          class="option-item"
+        >
+          <img :src="item.img">
+        </el-option>
       </el-select>
     </el-tooltip>
   </div>
@@ -167,21 +183,63 @@ export default {
       undoAble: false,
       redoAble: false,
       colors: '#345678',
-      linetype: 'pro-polyline',
+      linetype: {
+        type: 'polyline',
+        desc: '折线'
+      },
       lineOptions: [
         {
-          value: 'pro-polyline',
-          label: '折线'
+          value: 'polyline',
+          label: '折线',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/44aa9f1b8a73a20101477a3e66cb019b.png'
         },
         {
-          value: 'pro-line',
-          label: '直线'
+          value: 'line',
+          label: '直线',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/93d4af78d3c27123ee589522ce2ef679.png'
         },
         {
-          value: 'pro-bezier',
-          label: '曲线'
+          value: 'bezier',
+          label: '曲线',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/634de3c2f8b97ab97a92548d6819d5be.png'
         }
       ],
+      points: [
+        {
+          value: 'fill-triangle',
+          label: '实心三角形',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/3771aa4e120bd6532b65a9ae5d124ad2.png'
+        },
+        {
+          value: 'empty-triangle',
+          label: '空心三角形',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/1765e52dbeb17a7f69cc03476a7ccefc.png'
+        },
+        {
+          value: 'fill-circle',
+          label: '实心圆',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/88fea179071427cc44f51e73482c792c.png'
+        },
+        {
+          value: 'empty-circle',
+          label: '空心圆',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/d49afae19e9de64d5c31fed599213cab.png'
+        },
+        {
+          value: 'fill-diamond',
+          label: '实心菱形',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/07544758628bd2ddca51da0bac752f54.png'
+        },
+        {
+          value: 'empty-diamond',
+          label: '空心菱形',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/08/3ded572d005b457aa399563aee974a23.png'
+        },
+      ],
+      pointtype: {
+        type: 'fill-triangle',
+        desc: '实心三角形'
+      },
       borderWidthOptions: Array(11).fill().map((_, i) => i),
       style: {
         backgroundColor: '#333333', // 填充色
@@ -224,7 +282,6 @@ export default {
       this.lf.zoom(false)
     },
     undo () {
-      
       if (this.$data.undoAble) {
         this.lf.undo()
       }
@@ -233,6 +290,11 @@ export default {
       if (this.$data.redoAble) {
         this.lf.redo()
       }
+    },
+    selectBorder (val) {
+      this.$emit('setStyle', {
+        borderStyle: val
+      })
     },
     changeColorProperty ({ rgba: { r, g, b, a } }, type) {
       if (this.disabled) {
@@ -280,13 +342,28 @@ export default {
       })
     },
     changeLineType(value) {
-      const {lf, activeEdges} = this.$props
-      const {graphModel} = lf
+      console.log(this.pointtype.type + '-' + value);
+      const { lf, activeEdges } = this.$props
+      const { graphModel } = lf
       lf.setDefaultEdgeType(value)
+      this.linetype.type = value
       if(activeEdges && activeEdges.length > 0) {
         activeEdges.forEach(edge => {
           graphModel.changeEdgeType(edge.id, value)
         })
+      }
+    },
+    changePoint (value) {
+      if (value) {
+        this.pointtype.type = value
+        console.log(value + '-' + this.linetype.type);
+        const { lf, activeEdges } = this.$props
+        const { graphModel } = lf
+        if(activeEdges && activeEdges.length > 0) {
+          activeEdges.forEach(edge => {
+            graphModel.changeEdgeType(edge.id, value + '-' + this.linetype.type)
+          })
+        }
       }
     }
   },
@@ -321,6 +398,15 @@ export default {
 }
 .el-tooltip {
   flex-shrink: 0;
+}
+.option-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 20px; 
+    height: 20px;
+  }
 }
 .divider {
   min-width: 1px;
