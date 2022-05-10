@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { addGraph } from '../api/index'
 export default {
   name: 'leftNav',
   data () {
@@ -38,7 +39,15 @@ export default {
       this.$router.push(name)
     },
     newFile () {
-
+      // this.$http.get('api/graphs/add').then(res => {
+      //   console.log(res);
+      // })
+      addGraph().then(res => {
+        if (res.status === 200) {
+          const graph = res.data.graph
+          this.$router.push('diagraming/' + graph.id)
+        }
+      })
     }
   }
 }

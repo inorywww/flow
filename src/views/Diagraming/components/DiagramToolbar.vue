@@ -75,6 +75,19 @@
         </el-popover>
       </el-tooltip>
     </div>
+    <el-tooltip content="终点" style="max-width: 100px; margin-left: 4px">
+      <el-select v-model="aligntype" size="mini" @change="changeTextAlign">
+        <el-option
+          v-for="item in aligns"
+          :key="item.value"
+          :value="item.value"
+          :label="item.label"
+          class="option-item"
+        >
+          <img :src="item.img">
+        </el-option>
+      </el-select>
+    </el-tooltip>
     <div class="divider"></div>
     
     <!-- <div>
@@ -145,6 +158,16 @@
           <img :src="item.img">
         </el-option>
       </el-select>
+    </el-tooltip>
+    <el-tooltip content="下载">
+      <div class="toolbar-item" @click="saveGraph">
+        <svg t="1652168630584" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="107196" width="20" height="20"><path d="M502.010485 765.939573c3.773953 3.719718 8.686846 5.573949 13.596669 5.573949 0.075725 0 0.151449-0.010233 0.227174-0.011256 0.329505 0.016373 0.654916 0.050142 0.988514 0.050142 0.706081 0 1.400906-0.042979 2.087545-0.116657 4.352121-0.366344 8.607028-2.190899 11.961426-5.496178l335.053985-330.166675c7.619538-7.509021 7.709589-19.773346 0.200568-27.393907s-19.774369-7.711636-27.39493-0.201591L536.193005 706.304358 536.193005 50.019207c0-10.698666-8.67252-19.371186-19.371186-19.371186s-19.371186 8.67252-19.371186 19.371186l0 657.032164-306.881342-302.44838c-7.618515-7.509021-19.883863-7.419993-27.393907 0.199545-7.509021 7.619538-7.419993 19.884886 0.199545 27.393907L502.010485 765.939573z" p-id="107197"></path><path d="M867.170139 711.020776c-10.698666 0-19.371186 8.67252-19.371186 19.371186l0 165.419494c0 13.054317-10.620895 23.675212-23.676236 23.675212L205.182103 919.486668c-13.054317 0-23.676236-10.620895-23.676236-23.675212L181.505867 730.391962c0-10.698666-8.67252-19.371186-19.371186-19.371186s-19.371186 8.67252-19.371186 19.371186l0 165.419494c0 34.416857 28.000728 62.416562 62.417585 62.416562l618.941638 0c34.417881 0 62.417585-27.999704 62.417585-62.416562L886.540302 730.391962C886.541325 719.693296 877.868805 711.020776 867.170139 711.020776z" p-id="107198"></path></svg>
+      </div>
+    </el-tooltip>
+    <el-tooltip content="下载2">
+      <div class="toolbar-item" @click="download">
+        <svg t="1652168630584" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="107196" width="20" height="20"><path d="M502.010485 765.939573c3.773953 3.719718 8.686846 5.573949 13.596669 5.573949 0.075725 0 0.151449-0.010233 0.227174-0.011256 0.329505 0.016373 0.654916 0.050142 0.988514 0.050142 0.706081 0 1.400906-0.042979 2.087545-0.116657 4.352121-0.366344 8.607028-2.190899 11.961426-5.496178l335.053985-330.166675c7.619538-7.509021 7.709589-19.773346 0.200568-27.393907s-19.774369-7.711636-27.39493-0.201591L536.193005 706.304358 536.193005 50.019207c0-10.698666-8.67252-19.371186-19.371186-19.371186s-19.371186 8.67252-19.371186 19.371186l0 657.032164-306.881342-302.44838c-7.618515-7.509021-19.883863-7.419993-27.393907 0.199545-7.509021 7.619538-7.419993 19.884886 0.199545 27.393907L502.010485 765.939573z" p-id="107197"></path><path d="M867.170139 711.020776c-10.698666 0-19.371186 8.67252-19.371186 19.371186l0 165.419494c0 13.054317-10.620895 23.675212-23.676236 23.675212L205.182103 919.486668c-13.054317 0-23.676236-10.620895-23.676236-23.675212L181.505867 730.391962c0-10.698666-8.67252-19.371186-19.371186-19.371186s-19.371186 8.67252-19.371186 19.371186l0 165.419494c0 34.416857 28.000728 62.416562 62.417585 62.416562l618.941638 0c34.417881 0 62.417585-27.999704 62.417585-62.416562L886.540302 730.391962C886.541325 719.693296 877.868805 711.020776 867.170139 711.020776z" p-id="107198"></path></svg>
+      </div>
     </el-tooltip>
   </div>
 </template>
@@ -240,6 +263,24 @@ export default {
         type: 'fill-triangle',
         desc: '实心三角形'
       },
+      aligns: [
+        {
+          value: 'left',
+          label: '左对齐',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/10/9889de3db8cfd2e1ab03d7e6ee6559e7.png'
+        },
+        {
+          value: 'center',
+          label: '居中对齐',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/10/94dff53e6a31f8bf9310ca855d4fdf7d.png'
+        },
+        {
+          value: 'right',
+          label: '右对齐',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/10/4a2a7f659ceb1cc6bbfb52d9e728d77f.png'
+        },
+      ],
+      aligntype: 'center',
       borderWidthOptions: Array(11).fill().map((_, i) => i),
       style: {
         backgroundColor: '#333333', // 填充色
@@ -273,7 +314,7 @@ export default {
       this.$emit('changeNodeFillColor', val.hex)
     },
     saveGraph () {
-      this.$emit('saveGraph')
+      this.$parent.downloadImg()
     },
     zoomIn () {
       this.lf.zoom(true)
@@ -305,6 +346,11 @@ export default {
       this.$set(this.style, type, color)
       this.$emit('setStyle', {
         [type]: color
+      })
+    },
+    changeTextAlign (val) {
+      this.$emit('setStyle', {
+        textAlign: val
       })
     },
     changeFontFamily (val) {
@@ -365,7 +411,24 @@ export default {
           })
         }
       }
+    },
+    download () {
+      this.$parent.editGraph()
     }
+    // saveGraph () {
+    //   const data = this.lf.getGraphData()
+    //   this.download(this.filename, JSON.stringify(data))
+    // },
+    // download (filename, text) {
+    //   window.sessionStorage.setItem(filename, text)
+    //   const element = document.createElement('a')
+    //   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+    //   element.setAttribute('download', filename)
+    //   element.style.display = 'none'
+    //   document.body.appendChild(element)
+    //   element.click()
+    //   document.body.removeChild(element)
+    // }
   },
   components: {
     ColorFill,
