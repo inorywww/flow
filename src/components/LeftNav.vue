@@ -71,6 +71,7 @@ export default {
     border-radius: 4px;
     cursor: pointer;
     caret-color: transparent;
+    transform: translateX(4px);
   }
   .item {
     display: flex;

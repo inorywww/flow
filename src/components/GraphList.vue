@@ -1,6 +1,6 @@
 <template>
   <div class="graph-list">
-    <div class="graph" v-for="(item, index) in graphsList" :key="item.id" @click="toDetail(item.id)" @mouseenter.stop="checkMouse(index)" @mouseleave.stop="checkMouse(index)">
+    <div class="graph" v-for="(item, index) in graphsList" :key="item.id" @click="toDetail(item.id)" @contextmenu.prevent="" @click.right="showMenu(index)" @mouseenter.stop="checkMouse(index)" @mouseleave.stop="checkMouse(index)">
       <div class="cover">
         <img :src="item.img" alt="">
       </div>
@@ -102,6 +102,10 @@ export default {
       if (this.menuIndex === -1) {
         this.menuIconIndex = index
       }
+    },
+    showMenu (index) {
+      this.menuIndex = index
+      this.menuIconIndex = index
     },
     menuClick (index, menu_index, item) {
       this.selectItem = this.graphsList[index]
