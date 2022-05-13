@@ -16,5 +16,6 @@ export default {
 <style lang="less" scoped>
 #home {
   margin-top: 12px;
+  display: flex;
 }
 </style>

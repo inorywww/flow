@@ -30,18 +30,20 @@ export default {
     }
   },
   watch: {
-  '$route' (to, from) {
+  '$route' (to) {
       this.active = to.path.split('/')[1]
     }
   },
+  created () {
+    this.active = this.$route.path.split('/')[1]
+  },
   methods: {
     toPage (name) {
-      this.$router.push(name)
+      if (this.active !== name) {
+        this.$router.push(name)
+      }
     },
     newFile () {
-      // this.$http.get('api/graphs/add').then(res => {
-      //   console.log(res);
-      // })
       addGraph().then(res => {
         if (res.status === 200) {
           const graph = res.data.graph
@@ -56,11 +58,12 @@ export default {
 <style scoped lang="less">
 #left-nav {
   width: 200px;
+  flex-shrink: 0;
   .new {
     display: flex;
     justify-content: center;
     margin: 0 auto;
-    width: 110px;
+    width: 120px;
     line-height: 30px;
     text-align: center;
     background-color: #4386f5;

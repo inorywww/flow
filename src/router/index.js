@@ -33,6 +33,16 @@ const routes = [
     component: () => import('../views/Home/index.vue')
   },
   {
+    path: '/signup', // 注册页
+    name: 'home',
+    component: () => import('../views/SignUp/index.vue')
+  },
+  {
+    path: '/signin', // 登陆页
+    name: 'home',
+    component: () => import('../views/SignIn/index.vue')
+  },
+  {
     path: '/diagrams', // 图表页
     name: 'diagrams',
     component: () => import('../views/Diagrams/index.vue')
