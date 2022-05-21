@@ -1,6 +1,6 @@
 <template>
   <div class="graph-list">
-    <div class="graph" v-for="(item, index) in graphsList" :key="item.id" @click="toDetail(item.id)" @contextmenu.prevent="" @click.right="showMenu(index)" @mouseenter.stop="checkMouse(index)" @mouseleave.stop="checkMouse(index)">
+    <div class="graph" v-for="(item, index) in graphsList" :key="item.id + index" @click="toDetail(item.id)" @contextmenu.prevent="" @click.right="showMenu(index)" @mouseenter.stop="checkMouse(index)" @mouseleave.stop="checkMouse(index)">
       <div class="cover">
         <img :src="item.img" alt="">
       </div>
@@ -9,7 +9,7 @@
         <svg t="1652381027118" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3870" width="18" height="18"><path d="M170.666667 213.333333m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" p-id="3871"></path><path d="M170.666667 512m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" p-id="3872"></path><path d="M170.666667 810.666667m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" p-id="3873"></path><path d="M896 778.666667H362.666667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32h533.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32zM362.666667 245.333333h533.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32H362.666667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32zM896 480H362.666667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32h533.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32z" p-id="3874"></path></svg>
       </div>
       <div class="menu" v-if="menuIndex === index" @click.stop="">
-        <div class="menu-item" v-for="(menu, menu_index) in menuItems" :key="menu.desc" @click="menuClick(index, menu_index, item)">
+        <div class="menu-item" v-for="(menu, menu_index) in menuItems" :key="menu.desc + menu_index" @click="menuClick(index, menu_index, item)">
           <img :src="menu.icon" alt="">
           <span>{{menu.desc}}</span>
         </div>
@@ -21,7 +21,7 @@
       width="30%">
       <el-input v-model="renameVal" ref="rename-input"></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="renameDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="rename">确 定</el-button>
       </span>
     </el-dialog>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import {delOne, editGraph } from '../api/index'
+import { delOne, editGraph } from '../api/index'
 import { base64ToPng } from '../utils/index'
 
 export default {

@@ -1,15 +1,18 @@
 <template>
   <div class="diagram">
-    <NavigationBar :user_info="{}"></NavigationBar>
-    <MenuBar></MenuBar>
-    <diagram-toolbar
-      v-if="lf"
-      :lf="lf"
-      :activeEdges="activeEdges"
-      @setStyle="setStyle"
-    />
+    <template v-if="!isView">
+      <NavigationBar :user_info="{}" :file_name="graphData.name"></NavigationBar>
+      <MenuBar :graphData="graphData" :lf="lf" :showText="showText"></MenuBar>
+      <diagram-toolbar
+        v-if="lf"
+        :lf="lf"
+        :activeEdges="activeEdges"
+        @setStyle="setStyle"
+      />
+    </template>
+    <ShareHeader v-else :name="graphData.name"></ShareHeader>
     <div class="diagram-main">
-      <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" />
+      <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" v-if="!isView" />
       <div class="diagram-container" ref="container">
         <div class="diagram-wrapper">
           <div class="lf-diagram" ref="diagram"></div>
@@ -40,6 +43,7 @@ import DiagramSidebar from './components/DiagramSidebar.vue'
 import PropertyPanel from './components/PropertyPanel.vue'
 import NavigationBar from './components/NavigationBar.vue'
 import MenuBar from './components/MenuBar.vue'
+import ShareHeader from './components/ShareHeader.vue'
 import { registerCustomElement } from './node'
 import { getGraph, editGraph } from '../../api/index'
 import { Snapshot } from './utils/snapshot'
@@ -50,15 +54,20 @@ export default {
       sidebarWidth: 200,
       diagramWidth: 0,
       diagramHeight: 0,
-      lf: '',
+      lf: null,
       filename: '',
       activeNodes: [],
       activeEdges: [],
       properties: {},
-      graphData: {}
+      shortcuts: [],
+      graphData: {},
+      lastSelectId: '',
+      showText: '所有更改已保存',
+      isView: false
     }
   },
   mounted () {
+    this.isView = this.$route.name === 'view'
     this.getGraph()
     let data = ''
     if (window.location.search) {
@@ -78,20 +87,21 @@ export default {
   methods: {
     initLogicFlow (data) {
       // 引入框选插件
-      LogicFlow.use(SelectionSelect)
+      if (!this.isView) {
+        LogicFlow.use(SelectionSelect) 
+      }
       LogicFlow.use(Menu)
       LogicFlow.use(Snapshot)
       const lf = new LogicFlow({
         container: this.$refs.diagram,
-        overlapMode: 1,
-        autoWrap: true,
+        stopMoveGraph: !this.isView,
         metaKeyMultipleSelected: true,
         keyboard: {
           enabled: true
         },
+        isSilentMode: this.isView,
         grid: {
           visible: false,
-          size: 5
         },
         background: {
           backgroundImage: 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2QwZDBkMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDBkMGQwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=")',
@@ -110,48 +120,43 @@ export default {
       // 注册自定义元素
       registerCustomElement(lf)
       lf.setDefaultEdgeType('fill-triangle-polyline')
+      lf.selectAll = () => {
+        this.$nextTick(() => {
+          const { nodes } = this.lf.getGraphData()
+          nodes.forEach(({id}) => {
+            this.lf.graphModel.selectNodeById(id, true)
+          })
+        })
+      }
+      if (!this.isView) {
+        lf.openSelectionSelect();
+      }
       lf.render(data)
       this.lf = lf
-      this.lf.on('selection:selected, node:click, blank:click, edge:click', () => {
-        this.$nextTick(() => {
-          const { nodes, edges } = this.lf.getSelectElements()
-          this.activeNodes = nodes
-          this.activeEdges = edges
-          this.getProperty()
+      if (!this.isView) {
+        this.lf.on('selection:selected, node:click, blank:click, edge:click', () => {
+          this.$nextTick(() => {
+            const { nodes, edges } = this.lf.getSelectElements()
+            this.activeNodes = nodes
+            this.activeEdges = edges
+            this.getProperty()
+          })
         })
-      })
-      this.lf.on('history:change', () => {
-        if (this.timer) {
-          clearTimeout(this.timer)
-        }
-        this.timer = setTimeout(() => {
-          this.saveEditGraph()
-        }, 500)
-      })
-      this.lf.on('blank:click', () => {
-        console.log('blank:click');
-      })
-      this.lf.on('node:contextmenu', obj => {
-        console.log(obj);
-      })
+        this.lf.on('history:change', () => {
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() => {
+            this.saveEditGraph()
+          }, 500)
+        })
+      }
     },
     // 初始化右键菜单
     initMenu (lf) {
       const _this = this
       lf.extension.menu.addMenuConfig({
         nodeMenu: [
-          // {
-          //   text: '上移一层',
-          //   callback () {
-          //     _this.setZIndex('top')
-          //   }
-          // },
-          // {
-          //   text: '下移一层',
-          //   callback () {
-          //     _this.setZIndex('bottom')
-          //   }
-          // },
           {
             text: '置于顶层',
             callback () {
@@ -193,14 +198,37 @@ export default {
               alert('分享成功！');
             }
           },
+          {
+            text: '全选',
+            callback () {
+              lf.selectAll()
+            }
+          },
         ],
       })
+    },
+    initKeyword () {
+      this.shortcuts = [{
+        keys: ["backspace"],
+        callback: () => {
+          const r = window.confirm("确定要删除吗？");
+          if (r) {
+            const elements = lf.getSelectElements(true);
+            lf.clearSelectElements();
+            elements.edges.forEach((edge) => lf.deleteEdge(edge.id));
+            elements.nodes.forEach((node) => lf.deleteNode(node.id));
+          }
+        }
+      }]
     },
     getGraph () {
       getGraph(this.$route.params.id).then(res => {
         if (res.status === 200) {
           this.graphData = res.data[0]
           this.lf.addElements(JSON.parse(this.graphData.info))
+          this.$nextTick(() => {
+            this.lf.history.undos = []
+          })
         }
       })
     },
@@ -245,13 +273,16 @@ export default {
     saveEditGraph () {
       const data = this.graphData
       data.info = JSON.stringify(this.lf.getGraphData())
+      this.showText = '保存中...'
       this.lf.getSnapshotBase64().then(res => {
         data.img = res.data
       }).then(() => {
         editGraph(this.$route.params.id, data).then(res => {
           if (res.status === 200) {
-            console.log(res.data);
+            this.showText = '所有更改已保存'
           }
+        }).catch(err => {
+          this.showText = '所有更改已保存'
         })
       })
       
@@ -285,6 +316,9 @@ export default {
         console.log(res.data);
       })
     },
+    getCanUndo () {
+      return this.lf.history.undos.filter(item => item.nodes.length > 0 && item.edges.length > 0).length > 0
+    },
   },
   components: {
     DiagramToolbar,
@@ -292,6 +326,7 @@ export default {
     PropertyPanel,
     NavigationBar,
     MenuBar,
+    ShareHeader,
   }
 }
 </script>

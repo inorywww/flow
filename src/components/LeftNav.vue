@@ -31,11 +31,12 @@ export default {
   },
   watch: {
   '$route' (to) {
-      this.active = to.path.split('/')[1]
+    console.log(to);
+      this.active = to.name
     }
   },
   created () {
-    this.active = this.$route.path.split('/')[1]
+    this.active = this.$route.name
   },
   methods: {
     toPage (name) {
@@ -59,6 +60,7 @@ export default {
 #left-nav {
   width: 200px;
   flex-shrink: 0;
+  margin-top: 30px;
   .new {
     display: flex;
     justify-content: center;

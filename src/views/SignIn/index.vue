@@ -6,7 +6,7 @@
         <div class="tab" v-for="(item, index) in ['账号密码登录', '手机验证登录']" :key="item" :class="{'active': index === activeIndex}" @click="activeIndex = index">{{item}}</div>
       </div>
       <div class="login-form" v-if="activeIndex === 0">
-        <input type="text" v-model="account" placeholder="请输入邮箱或者手机号码">
+        <input type="text" v-model="account" placeholder="请输入手机号码">
         <input type="password" v-model="password" placeholder="请输入密码" style="margin-top: 12px">
       </div>
       <div class="login-form" v-else>
@@ -15,7 +15,9 @@
         </div>
         <div class="input-box" style="margin-top: 12px">
           <input type="text" v-model="code" placeholder="请输入验证码">
-          <div class="get-code" v-if="activeIndex === 1" @click="getCode">获取验证码</div>
+          <div class="get-code" v-if="activeIndex === 1" @click="getCode" :class="{cd: cd > 0}">
+            {{cd > 0 ? `${cd}s后可重新获取` : '获取验证码'}}
+          </div>
         </div>
       </div>
       <div class="login-btn" @click="check">立即登录</div>
@@ -28,9 +30,10 @@
 </template>
 
 <script>
+import { setToken, getToken } from "./js/auth";
 import { isPoneAvailable, isPassword } from '../../utils/index'
 import { signin, getCode, checkCode } from '../../api/users'
-
+import { setRememberPassword, removeRememberPassword, getRememberPassword, setRememberTel, removeRememberTel, getRememberTel } from './js/remember'
 export default {
   name: 'sign-in',
   data () {
@@ -38,7 +41,16 @@ export default {
       activeIndex: 0,
       account: '',
       password: '',
-      code: ''
+      code: '',
+      cd: 0
+    }
+  },
+  created () {
+    const rememberTel = getRememberTel()
+    const rememberPasword = getRememberPassword()
+    if(rememberTel && rememberPasword){
+      this.account = rememberTel
+      this.password = rememberPasword
     }
   },
   methods: {
@@ -54,17 +66,31 @@ export default {
             this.$message.error('密码格式错误')
           }
         } else {
-          this.checkCode()
+          if (this.code.length === 6) {
+            this.checkCode()
+          } else {
+            this.$message.error('正确填写验证码！')
+          }
         }
       } else {
         this.$message.error('手机号格式输入有误！')
       }
     },
     getCode () {
+      if (this.cd > 0) {
+        return
+      }
       if (isPoneAvailable(this.account)) {
         getCode(this.account).then(res => {
           if (res.status === 200) {
             this.$message.success('验证码发送成功，请注意查收')
+            this.cd = 120
+            this.timer =  setInterval(() => {
+              this.cd --
+              if (this.cd === 0) {
+                clearInterval(this.timer)
+              }
+            }, 1000)
           }
         })
       } else {
@@ -78,29 +104,44 @@ export default {
       }).then(res => {
         if (res.status === 200) {
           this.$message.success('登录成功！即将跳转文件页')
+          
           setTimeout(() => {
             this.$router.replace('diagrams')
           }, 2000)
         } else {
           this.$message.error('验证码错误！')
         }
+      }).catch(err => {
+        this.$message.error('验证码错误！')
       })
     },
     login () {
+      if (getToken()) {
+        this.$message.error('当前已登陆，请先退出登录！')
+        return
+      }
       signin({
         account: this.account,
         password: this.password
       }).then(res => {
         if (res.status === 200) {
           this.$message.success('登录成功！即将跳转文件页')
+          this.setRemember()
+          setToken(res.data.token)
           setTimeout(() => {
             this.$router.replace('diagrams')
           }, 2000)
         } else {
           this.$message.error('账号或密码错误！')
         }
+      }).catch(err => {
+        this.$message.error('账号或密码错误！')
       })
-    }
+    },
+    setRemember(){
+      setRememberTel(this.account);
+      setRememberPassword(this.password);
+    },
   }
 }
 </script>
@@ -108,7 +149,9 @@ export default {
 <style lang="less" scoped>
 #sign-in {
   width: 100%;
-  height: calc(100% - 50px);
+  height: calc(100% - 64px);
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2QwZDBkMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDBkMGQwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=");
+  background-repeat: repeat;
   .login-box {
     background: #fff;
     box-sizing: border-box;
@@ -186,6 +229,11 @@ export default {
           text-decoration: underline;
           margin-left: 8px;
           cursor: pointer;
+          &.cd {
+            color: #CCC;
+            text-decoration: unset;
+            cursor: unset;
+          }
         }
       }
     }

@@ -42,6 +42,16 @@ export function delOne(id, is_del = 0) {
   })
 }
 
+export function cloneFile(id, name) {
+  return request({
+    url: '/graphs/clone/' + id,
+    method: 'get',
+    params: {
+      name
+    }
+  })
+}
+
 export function delAll() {
   return request({
     url: '/graphs/delete',

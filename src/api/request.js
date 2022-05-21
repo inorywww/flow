@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {Loading} from 'element-ui';
-// import { getToken, removeToken } from "@/utils/auth";
-import { alertInfo } from "../utils/index";
-// import router from '@/router'
+import { getToken, removeToken } from "../views/SignIn/js/auth";
 let loading = null;
+import { Message } from 'element-ui';
+import router from '../router';
 // 创建axios实例
 const service = axios.create({
   baseURL: 'http://localhost:5000/api', // api的base_url
@@ -23,17 +23,17 @@ function endLoading(){
 }
 
 // 请求拦截
-// service.interceptors.request.use(config => {
-//   // 请求前加载动画
-//   // startLoading();
-//   if(getToken()){
-//     //判断当前token是否存在，如果存在就设置请求头header
-//     config.headers.Authorization = getToken();
-//   }
-//   return config;
-// }, error => {
-//   return Promise.reject(error);
-// })
+service.interceptors.request.use(config => {
+  // 请求前加载动画
+  // startLoading();
+  if(getToken()){
+    //判断当前token是否存在，如果存在就设置请求头header
+    config.headers.Authorization = getToken();
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+})
 
 // 响应拦截
 service.interceptors.response.use(response => {
@@ -42,13 +42,14 @@ service.interceptors.response.use(response => {
 }, error => {
   // endLoading();
   console.log(error);
+  
   // alertInfo(error.response.data,'error');
   // 获取错误状态码
   const { status } = error.response;
   if(status === 401){
-    alertInfo('token已失效，请重新登录！','error');
+    Message.error('token已失效，请重新登录')
     removeToken();
-    // router.push('/login');
+    router.push('/login');
   }
   return Promise.reject(error);
 })

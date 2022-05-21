@@ -1,4 +1,11 @@
 import request from "./request";
+// 注册
+export function authToken() {
+  return request({ 
+    url: '/admin/authToken',
+    method: 'get',
+  })
+}
 
 // 注册
 export function register(data) {
@@ -48,21 +55,10 @@ export function forget(account) {
 }
 
 // 找回密码
-export function getUserInfo(account) {
+export function editUserInfo(data) {
   return request({
-    url: '/admin/getUserInfo/' + account,
-    method: 'get'
-  })
-}
-
-// 找回密码
-export function editUserInfo(account, data) {
-  return request({
-    url: '/admin/signin',
+    url: '/admin/edit',
     method: 'post',
-    params: {
-      account
-    },
     data
   })
 }

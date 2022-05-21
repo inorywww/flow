@@ -1,7 +1,13 @@
 <template>
   <div id="diagrams">
     <div class="title">最近删除</div>
-    <GraphList :graphsList="graphsList" :is_trash="true"></GraphList>
+    <GraphList
+    :graphsList="graphsList"
+    :is_trash="true"
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.0)"></GraphList>
   </div>
 </template>
 
@@ -14,6 +20,7 @@ export default {
   data () {
     return {
       graphsList: [],
+      loading: false
     }
   },
   mounted () {
@@ -21,9 +28,11 @@ export default {
   },
   methods: {
     getAllGraphs () {
+      this.loading = true
       getGraphs(2).then(res => {
         if (res.status == 200) {
           this.graphsList = res.data
+          this.loading = false
         }
       })
     },

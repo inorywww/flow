@@ -17,7 +17,7 @@ export default {
   },
   watch: {
   '$route' (to) {
-      this.show_header = to.path.split('/')[1] !== 'diagraming'
+      this.show_header = (to.name !== 'diagraming' && to.name !== 'view')
     }
   },
 }
@@ -32,5 +32,10 @@ body {
 #app {
   width: 100%;
   height: 100%;
+}
+.el-loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
