@@ -1,5 +1,7 @@
 <template>
   <div class="diagram">
+    <NavigationBar :user_info="{}"></NavigationBar>
+    <MenuBar></MenuBar>
     <diagram-toolbar
       v-if="lf"
       :lf="lf"
@@ -30,12 +32,14 @@
 import LogicFlow from '@logicflow/core'
 import { SelectionSelect } from '@logicflow/extension'
 import { Menu } from '@logicflow/extension'
-// import { Snapshot } from '@logicflow/extension'
+import { lfJson2Xml, lfXml2Json} from '@logicflow/extension';
 import '@logicflow/core/dist/style/index.css'
 import '@logicflow/extension/lib/style/index.css'
 import DiagramToolbar from './components/DiagramToolbar.vue'
 import DiagramSidebar from './components/DiagramSidebar.vue'
 import PropertyPanel from './components/PropertyPanel.vue'
+import NavigationBar from './components/NavigationBar.vue'
+import MenuBar from './components/MenuBar.vue'
 import { registerCustomElement } from './node'
 import { getGraph, editGraph } from '../../api/index'
 import { Snapshot } from './utils/snapshot'
@@ -252,8 +256,29 @@ export default {
       })
       
     },
-    downloadImg () {
-      this.lf.getSnapshot(this.graphData.name + '.png')
+    downloadImg (type = 'png') {
+      if (type === 'png' || type === 'jpg') {
+        this.lf.getSnapshot(this.graphData.name + '.' + type)
+      } else if (type === 'lf') {
+        download(this.graphData.name + '.lf', JSON.stringify(this.lf.getGraphData()));
+      } else {
+        download(this.graphData.name + '.xml', lfJson2Xml(this.lf.getGraphData()));
+      }
+      function download(name, data) {
+        var urlObject = window.URL || window.webkitURL || window;
+        var downloadData = new Blob([data]);
+        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+        save_link.href = urlObject.createObjectURL(downloadData);
+        save_link.download = name;
+        fake_click(save_link);
+      }
+      function fake_click(obj) {
+        var ev = document.createEvent("MouseEvents");
+        ev.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
+        );
+        obj.dispatchEvent(ev);
+      }
     },
     saveBase64 () {
       this.lf.getSnapshotBase64().then(res => {
@@ -264,12 +289,18 @@ export default {
   components: {
     DiagramToolbar,
     DiagramSidebar,
-    PropertyPanel
+    PropertyPanel,
+    NavigationBar,
+    MenuBar,
   }
 }
 </script>
 
-<style scoped>
+<style>
+.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+  background-color: #eee !important;
+  color: #606266 !important;
+}
 .diagram {
   width: 100vw;
   height: 100vh;

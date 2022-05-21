@@ -46,3 +46,23 @@ export function forget(account) {
     method: 'get'
   })
 }
+
+// 找回密码
+export function getUserInfo(account) {
+  return request({
+    url: '/admin/getUserInfo/' + account,
+    method: 'get'
+  })
+}
+
+// 找回密码
+export function editUserInfo(account, data) {
+  return request({
+    url: '/admin/signin',
+    method: 'post',
+    params: {
+      account
+    },
+    data
+  })
+}

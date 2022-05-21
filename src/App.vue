@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header />
+    <Header v-if="show_header"/>
     <router-view />
   </div>
 </template>
@@ -9,7 +9,17 @@
 import Header from './components/Header.vue';
 export default {
   name: 'App',
-  components: { Header }
+  components: { Header },
+  data () {
+    return {
+      show_header: true
+    }
+  },
+  watch: {
+  '$route' (to) {
+      this.show_header = to.path.split('/')[1] !== 'diagraming'
+    }
+  },
 }
 </script>
 

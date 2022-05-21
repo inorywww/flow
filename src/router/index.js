@@ -47,6 +47,11 @@ const routes = [
     name: 'diagrams',
     component: () => import('../views/Diagrams/index.vue')
   },
+  {
+    path: '/account', // 个人空间页
+    name: 'account',
+    component: () => import('../views/Account/index.vue')
+  },
   // {
   //   path: '/diagraming', // 图表页
   //   name: 'diagraming',
