@@ -8,7 +8,7 @@ import { getShapeStyleFuction, getTextStyleFunction } from '../getShapeStyleUtil
 class DiamondModel extends DiamondResize.model {
   initNodeData(data) {
     super.initNodeData(data)
-    this.rx = 35
+    this.rx = 45
     this.ry = 35
   }
   getNodeStyle () {

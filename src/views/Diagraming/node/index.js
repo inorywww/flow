@@ -2,6 +2,7 @@
 import CircleNode from './basic/CircleNode'
 import RectNode from './basic/RectNode'
 import RectRadiusNode from './basic/RectRadiusNode'
+import RectRadiusNode2 from './basic/RectRadiusNode2'
 import EllipseNode from './basic/EllipseNode'
 import TextNode from './basic/TextNode'
 import DiamondNode from './basic/DiamondNode'
@@ -43,11 +44,33 @@ import EmptyDiamondPolyline from './edge/Polyline/EmptyDiamondPolyline'
 import Line from './edge/Line/index'
 import Bezier from './edge/Bezier/index'
 
+// 流程图
+import subProcess from './flow/SubProcess'
+import exData from './flow/ExData'
+import innerSave from './flow/InnerSave'
+import queueData from './flow/queueData'
+
+//ER
+import DerivedAttribute from './ER/DerivedAttribute'
+import DbEntity from './ER/DbEntity'
+import WeakEntity from './ER/WeakEntity'
+import WeakRelation from './ER/WeakRelation'
+import Prevail from './ER/Prevail'
+import AllPrevail from './ER/AllPrevail'
+import ArtificialInput from './flow/ArtificialInput'
+import Card from './flow/Card'
+import Bands from './flow/Bands'
+import Exhibit from './flow/Exhibit'
+import ArtificialOperation from './flow/ArtificialOperation'
+import ParallelMode from './flow/ParallelMode'
+import otherImport from './flow/otherImport'
+
 export const registerCustomElement = (lf) => {
   // 注册基础图形
   lf.register(CircleNode)
   lf.register(RectNode)
   lf.register(RectRadiusNode)
+  lf.register(RectRadiusNode2)
   lf.register(EllipseNode)
   lf.register(DiamondNode)
   lf.register(TextNode)
@@ -88,5 +111,24 @@ export const registerCustomElement = (lf) => {
   lf.register(EmptyDiamondPolyline)
   lf.register(Line)
   lf.register(Bezier)
+
+  lf.register(subProcess)
+  lf.register(exData)
+  lf.register(innerSave)
+  lf.register(queueData)
+
+  lf.register(DerivedAttribute)
+  lf.register(DbEntity)
+  lf.register(WeakEntity)
+  lf.register(WeakRelation)
+  lf.register(Prevail)
+  lf.register(AllPrevail)
+  lf.register(ArtificialInput)
+  lf.register(Card)
+  lf.register(Bands)
+  lf.register(Exhibit)
+  lf.register(ArtificialOperation)
+  lf.register(ParallelMode)
+  lf.register(otherImport)
 }
 

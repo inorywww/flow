@@ -419,6 +419,7 @@ export default {
   align-items: center;
   border-bottom: 1px solid #e5e5e5;
   z-index: 10;
+  user-select: none;  
   .tool-group {
     display: flex;
   }

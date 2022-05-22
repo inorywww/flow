@@ -8,10 +8,13 @@
       <div class="menu-icon" v-if="menuIconIndex === index" @click.stop="menuIndex = index">
         <svg t="1652381027118" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3870" width="18" height="18"><path d="M170.666667 213.333333m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" p-id="3871"></path><path d="M170.666667 512m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" p-id="3872"></path><path d="M170.666667 810.666667m-64 0a64 64 0 1 0 128 0 64 64 0 1 0-128 0Z" p-id="3873"></path><path d="M896 778.666667H362.666667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32h533.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32zM362.666667 245.333333h533.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32H362.666667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32zM896 480H362.666667c-17.066667 0-32 14.933333-32 32s14.933333 32 32 32h533.333333c17.066667 0 32-14.933333 32-32s-14.933333-32-32-32z" p-id="3874"></path></svg>
       </div>
-      <div class="menu" v-if="menuIndex === index" @click.stop="">
-        <div class="menu-item" v-for="(menu, menu_index) in menuItems" :key="menu.desc + menu_index" @click="menuClick(index, menu_index, item)">
+      <div class="menu" v-if="menuIndex === index" @click.stop="" @mouseleave="showSub = false">
+        <div class="menu-item" v-for="(menu, menu_index) in menuItems" :key="menu.desc + menu_index" @click="menuClick(index, menu_index, item)" @mouseenter="showSub = menu.desc === '下载为...'">
           <img :src="menu.icon" alt="">
           <span>{{menu.desc}}</span>
+          <div class="sub-list" v-if="menu.desc === '下载为...' && showSub">
+            <div class="sub-item" v-for="subItem in downloadList" :key="subItem.desc" @click.stop="download(item, subItem)">{{subItem.desc}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -25,15 +28,30 @@
         <el-button type="primary" @click="rename">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="克隆此文件"
+      :visible.sync="cloneDialogVisible"
+      width="35%">
+      <el-input v-model="cloneVal" ref="clone-input"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cloneDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmClone">确 定</el-button>
+      </span>
+    </el-dialog>
+    <ShareDialog v-if="showShare" :link="shareLink"></ShareDialog>
+
   </div>
   
 </template>
 
 <script>
-import { delOne, editGraph } from '../api/index'
+import { delOne, editGraph, cloneFile } from '../api/index'
 import { base64ToPng } from '../utils/index'
-
+import { lfJson2Xml } from '@logicflow/extension';
+import ShareDialog from './ShareDialog.vue'
+import { cloneDeep } from 'lodash'
 export default {
+  components: { ShareDialog },
   props: {
     graphsList: {
       type: Array,
@@ -46,6 +64,9 @@ export default {
   },
   data () {
     return {
+      showShare: false,
+      shareLink: '',
+      cloneDialogVisible: false,
       menuItems: [
         {
           icon: 'https://imgheybox.max-c.com/oa/2022/05/12/c36022e3f0cdfd12d8bca47d8acd61a7.png',
@@ -61,22 +82,43 @@ export default {
         },
         {
           icon: 'https://imgheybox.max-c.com/oa/2022/05/12/bf8304e576cb38c8df9683f9489a3a89.png',
-          desc: '下载'
+          desc: '下载为...'
         },
         {
           icon: 'https://imgheybox.max-c.com/oa/2022/05/12/e055b8140d76812c4909d800a1d5ed2e.png',
-          desc: '复制'
+          desc: '克隆'
         },
         {
           icon: 'https://imgheybox.max-c.com/oa/2022/05/12/04891d14a5ade3f4e5de081638c2b7b4.png',
           desc: '删除'
         },
       ],
+      downloadList: [
+        {
+          desc: 'PNG图片文件（*.png）',
+          key: 'png'
+        },
+        {
+          desc: 'JPG图片文件（*.jpg',
+          key: 'jpg'
+        },
+        {
+          desc: 'LogicFlow文件（*.lf）',
+          key: 'lf'
+        },
+        {
+          desc: 'XML文件*.xml',
+          key: 'xml'
+        },
+      ],
+      showSub: false,
       menuIndex: -1,
       menuIconIndex: -1,
       selectItem: {},
       renameDialogVisible: false,
-      renameVal: ''
+      renameVal: '',
+      cloneVal: '',
+      cloneFile: {}
     }
   },
   mounted () {
@@ -107,6 +149,9 @@ export default {
       this.menuIndex = index
       this.menuIconIndex = index
     },
+    hover (item) {
+      this.showSub = item.desc === '下载为...'
+    },
     menuClick (index, menu_index, item) {
       this.selectItem = this.graphsList[index]
       if (this.is_trash) {
@@ -127,13 +172,13 @@ export default {
             this.showRename(item, index)
             break
           case 2:
-            this.share()
+            this.share(item)
             break
           case 3:
-            this.download(item)
+            // this.download(item)
             break
           case 4:
-            this.copy()
+            this.clone(item)
             break
           case 5:
             this.delOne(item.id, index)
@@ -194,14 +239,51 @@ export default {
         }
       })
     },
-    share () {
-
+    share (item) {
+      this.shareLink = window.location.origin + '/view/' + item.id
+      this.showShare = true
     },
-    download (item) {
-      base64ToPng(item.img, item.name)
+    download (item, subItem) {
+      this.menuIndex = -1
+      this.menuIconIndex = -1
+      if (subItem.key === 'png' || subItem.key === 'jpg') {
+        base64ToPng(item.img, item.name, subItem.key)
+      } else if (subItem.key === 'lf') {
+        download(item.name + '.lf', item.info);
+      } else {
+        download(item.name + '.xml', lfJson2Xml(JSON.parse(item.info)));
+      }
+      function download(name, data) {
+        var urlObject = window.URL || window.webkitURL || window;
+        var downloadData = new Blob([data]);
+        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+        save_link.href = urlObject.createObjectURL(downloadData);
+        save_link.download = name;
+        fake_click(save_link);
+      }
+      function fake_click(obj) {
+        var ev = document.createEvent("MouseEvents");
+        ev.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
+        );
+        obj.dispatchEvent(ev);
+      }
     },
-    copy () {
-
+    clone (item) {
+      this.cloneVal = item.name
+      this.cloneFile = cloneDeep(item)
+      this.cloneDialogVisible = true
+    },
+    confirmClone () {
+      cloneFile(this.cloneFile.id, this.cloneVal).then(res => {
+        if (res.status === 200) {
+          this.$message.success('克隆成功！')
+          this.$parent.graphsList.push(res.data.graph)
+        } else {
+          this.$message.error('克隆失败！')
+        }
+        this.cloneDialogVisible = false
+      })
     },
     toDetail (id) {
       if (!this.is_trash) {
@@ -321,6 +403,26 @@ export default {
         }
         span {
           font-size: 13px;
+        }
+        .sub-list {
+          position: absolute;
+          left: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          border: 1px solid #e5e5e5;
+          .sub-item {
+            line-height: 36px;
+            padding: 0 16px;
+            font-size: 14px;
+            color: #606266;
+            cursor: pointer;
+            outline: 0;
+            white-space: nowrap;
+            background-color: #FFF;
+            &:hover {
+              background-color: #eee;
+            }
+          }
         }
       }
       &::before {

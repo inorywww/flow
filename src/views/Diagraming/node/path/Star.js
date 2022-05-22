@@ -26,10 +26,10 @@ class StarView extends RectNode.view {
     }
     
     return h('svg', {  ...svgAttr, viewBox: '0 0 37 37' }, [
-        h('path', {
-          ...pathAAttrs,
-        })
-      ])
+      h('path', {
+        ...pathAAttrs,
+      })
+    ])
   }
 }
 

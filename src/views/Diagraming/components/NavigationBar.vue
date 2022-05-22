@@ -81,7 +81,6 @@ export default {
   },
   methods: {
     share () {
-      console.log(this.$route);
       this.shareLink = window.location.origin + '/view/' + this.$route.params.id
       this.showShare = true
     },
@@ -116,6 +115,7 @@ export default {
 }
 #navigation-bar {
   padding: 12px 16px;
+  user-select: none;
   .bar-inner {
     display: flex;
     align-items: center;

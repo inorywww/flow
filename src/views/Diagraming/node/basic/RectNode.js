@@ -3,7 +3,11 @@ import { getShapeStyleFuction, getTextStyleFunction } from '../getShapeStyleUtil
 
 // 矩形
 class RectNewModel extends RectResize.model {
-
+  initNodeData(data) {
+    super.initNodeData(data)
+    this.width = 100
+    this.height = 60
+  }
   setToBottom () {
     this.zIndex = 0
   }

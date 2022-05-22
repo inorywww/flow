@@ -11,8 +11,8 @@
       />
     </template>
     <ShareHeader v-else :name="graphData.name"></ShareHeader>
-    <div class="diagram-main">
-      <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" v-if="!isView" />
+    <div class="diagram-main" :style="{height: isView ? '100%' : ''}">
+      <diagram-sidebar class="diagram-sidebar" @dragInNode="dragInNode" v-if="!isView" :types="graphData.types" />
       <div class="diagram-container" ref="container">
         <div class="diagram-wrapper">
           <div class="lf-diagram" ref="diagram"></div>
@@ -60,7 +60,9 @@ export default {
       activeEdges: [],
       properties: {},
       shortcuts: [],
-      graphData: {},
+      graphData: {
+        types: []
+      },
       lastSelectId: '',
       showText: '所有更改已保存',
       isView: false
@@ -83,6 +85,17 @@ export default {
       }
     }
     this.initLogicFlow(data)
+    // document.addEventListener('keydown', (e) => {
+    //   console.log(e.keyCode);
+    //   if (this.activeNodes && this.activeNodes.length > 0) {
+    //     this.activeNodes.forEach((item) => {
+    //       console.log(item);
+    //       this.lf.graphModel.updateAttributes(item.id, {
+    //         x: item.x + 1
+    //       });
+    //     })
+    //   }
+    // })
   },
   methods: {
     initLogicFlow (data) {
@@ -92,12 +105,14 @@ export default {
       }
       LogicFlow.use(Menu)
       LogicFlow.use(Snapshot)
+      this.initKeyword()
       const lf = new LogicFlow({
         container: this.$refs.diagram,
         stopMoveGraph: !this.isView,
         metaKeyMultipleSelected: true,
         keyboard: {
-          enabled: true
+          enabled: true,
+          shortcuts: this.shortcuts
         },
         isSilentMode: this.isView,
         grid: {
@@ -140,6 +155,7 @@ export default {
             this.activeNodes = nodes
             this.activeEdges = edges
             this.getProperty()
+            console.log(this.lf);
           })
         })
         this.lf.on('history:change', () => {
@@ -208,23 +224,30 @@ export default {
       })
     },
     initKeyword () {
-      this.shortcuts = [{
-        keys: ["backspace"],
-        callback: () => {
-          const r = window.confirm("确定要删除吗？");
-          if (r) {
-            const elements = lf.getSelectElements(true);
-            lf.clearSelectElements();
-            elements.edges.forEach((edge) => lf.deleteEdge(edge.id));
-            elements.nodes.forEach((node) => lf.deleteNode(node.id));
-          }
-        }
-      }]
+      // this.shortcuts = [{
+      //   keys: ['command+a', 'ctrl+a'],
+      //   callback: () => {
+      //     this.lf.selectAll()
+      //   }
+      // }]
+      // this.shortcuts = [{
+      //   keys: ["backspace"],
+      //   callback: () => {
+      //     const r = window.confirm("确定要删除吗？");
+      //     if (r) {
+      //       const elements = lf.getSelectElements(true);
+      //       lf.clearSelectElements();
+      //       elements.edges.forEach((edge) => lf.deleteEdge(edge.id));
+      //       elements.nodes.forEach((node) => lf.deleteNode(node.id));
+      //     }
+      //   }
+      // }]
     },
     getGraph () {
       getGraph(this.$route.params.id).then(res => {
         if (res.status === 200) {
           this.graphData = res.data[0]
+          console.log(this.graphData);
           this.lf.addElements(JSON.parse(this.graphData.info))
           this.$nextTick(() => {
             this.lf.history.undos = []
@@ -344,7 +367,7 @@ export default {
 .diagram-main {
   display: flex;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 160px);
 }
 .diagram-sidebar {
   width: 185px;

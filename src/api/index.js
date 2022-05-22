@@ -14,13 +14,17 @@ export function getGraph(id) {
   return request({
     url: '/graphs/' + id,
     method: 'get',
+    headers: {
+      showLoading: true
+    }
   })
 }
 
-export function addGraph() {
+export function addGraph(data) {
   return request({
     url: '/graphs/add',
-    method: 'get',
+    method: 'post',
+    data
   })
 }
 

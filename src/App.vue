@@ -33,9 +33,20 @@ body {
   width: 100%;
   height: 100%;
 }
+.el-input {
+  user-select: none;
+}
 .el-loading-spinner {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.lf-line-text > .lf-basic-shape {
+  display: none !important;
+}
+.el-dialog__body .el-input {
+  margin: 20px;
+  max-width: 90%;
+  text-align: center;
 }
 </style>

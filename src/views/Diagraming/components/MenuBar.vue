@@ -102,7 +102,7 @@ export default {
                   key: 'png'
                 },
                 {
-                  desc: 'JPN图片文件（*.jpg',
+                  desc: 'JPG图片文件（*.jpg',
                   key: 'jpg'
                 },
                 {
@@ -385,6 +385,7 @@ export default {
 #menu-bar {
   padding: 0 32px 8px;
   border-bottom: 1px solid #e5e5e5;
+  user-select: none;
   .menu {
     display: flex;
     align-items: center;
