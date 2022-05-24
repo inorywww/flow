@@ -66,14 +66,24 @@ import ParallelMode from './flow/ParallelMode'
 import otherImport from './flow/otherImport'
 
 //UML
-import UMLBag from './UML/UML-bag'
-import UMLCombination from './UML/UML-combination'
-import UMLAnno from './UML/UML-anno'
-import UMLContainer from './UML/UML-container'
-import UMLContainer1 from './UML/UML-container1'
-import UMLEntity from './UML/UML-entity'
-import UMLControl from './UML/UML-control'
-import UMLBind from './UML/UML-bind'
+import UMLBag from './UML/UMLBag'
+import UMLCombination from './UML/UMLCombination'
+import UMLAnno from './UML/UMLAnno'
+import UMLContainer from './UML/UMLContainer'
+import UMLContainer1 from './UML/UMLContainer1'
+import UMLEntity from './UML/UMLEntity'
+import UMLControl from './UML/UMLControl'
+import UMLBind from './UML/UMLBind'
+import UmlTimeSingle from './UML/UmlTimeSingle'
+import UmlConstraint from './UML/UmlConstraint'
+import UMLActive from './UML/UMLActive'
+import UMLLifeLine from './UML/UMLLifeLine'
+import UMLDelete from './UML/UMLDelete'
+import UMLInterface from './UML/UMLInterface'
+import UMLClass1 from './UML/UMLClass1'
+import UMLActiveClass from './UML/UMLActiveClass'
+import UMLDbClass from './UML/UMLDbClass'
+import UMLInterface1 from './UML/UMLInterface1'
 
 export const registerCustomElement = (lf) => {
   // 注册基础图形
@@ -152,7 +162,16 @@ export const registerCustomElement = (lf) => {
   lf.register(UMLEntity)
   lf.register(UMLControl)
   lf.register(UMLBind)
-
+  lf.register(UmlTimeSingle)
+  lf.register(UmlConstraint)
+  lf.register(UMLActive)
+  lf.register(UMLLifeLine)
+  lf.register(UMLDelete)
+  lf.register(UMLInterface)
+  lf.register(UMLClass1)
+  lf.register(UMLActiveClass)
+  lf.register(UMLDbClass)
+  lf.register(UMLInterface1)
 
 }
 

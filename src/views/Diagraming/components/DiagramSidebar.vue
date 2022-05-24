@@ -238,6 +238,47 @@
         <div class="node-item" @mousedown="dragInNode('uml-bind')" ref="uml-bind" @mouseenter="showDetail('uml-bind', '绑定')">
           <uml-bind class="svg-node" />
         </div>
+        <div class="node-item" @mousedown="dragInNode('uml-time-single')" ref="uml-time-single" @mouseenter="showDetail('uml-time-single', '时间信号')">
+          <uml-time-single class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-constraint')" ref="uml-constraint" @mouseenter="showDetail('uml-constraint', '约束')">
+          <uml-constraint class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-active')" ref="uml-active" @mouseenter="showDetail('uml-active', '激活')">
+          <uml-active class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-life-line')" ref="uml-life-line" @mouseenter="showDetail('uml-life-line', '生命线')">
+          <uml-life-line class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-delete')" ref="uml-delete" @mouseenter="showDetail('uml-delete', '删除')">
+          <uml-delete class="svg-node" />
+        </div>
+      </div>
+    </div>
+    <div class="group UML-Chart" v-if="showTypes.includes('UML-class')">
+      <div class="title-box" @click="addShows('UML-class')">
+        <svg :class="{'open': shows.includes('UML-class')}" t="1653205704909" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="48683" width="16" height="16"><path d="M398.499 236.5l274.256 274.256-274.256 274.256z" p-id="48684"></path></svg>
+        <h1 class="node-group-title">UML 类图</h1>
+      </div>
+      <div class="node-group" v-if="shows.includes('UML-class')" @mouseleave="detailCpt = ''">
+        <div class="node-item" @mousedown="dragInNode('pro-rect')" ref="uml-class" @mouseenter="showDetail('uml-class', '简单类')">
+          <uml-class class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-interface')" ref="uml-interface" @mouseenter="showDetail('uml-interface', '接口和类')">
+          <uml-interface class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-class-1')" ref="uml-class-1" @mouseenter="showDetail('uml-class-1', '类')">
+          <uml-class-1 class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-active-class')" ref="uml-active-class" @mouseenter="showDetail('uml-active-class', '活动类')">
+          <uml-active-class class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-db-class')" ref="uml-db-class" @mouseenter="showDetail('uml-db-class', '多例类')">
+          <uml-db-class class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-interface-1')" ref="uml-interface-1" @mouseenter="showDetail('uml-interface-1', '接口')">
+          <uml-interface-1 class="svg-node" />
+        </div>
       </div>
     </div>
     <div class="btn new" @click="showDialog">
@@ -333,8 +374,19 @@ import UmlContainer from '../icons/UML/UmlContainer.vue'
 import UmlContainer1 from '../icons/UML/UmlContainer1.vue'
 import UmlObj from '../icons/UML/UmlObj.vue'
 import UmlEntity from '../icons/UML/UmlEntity.vue'
-import UmlControl from '../icons/UML/UMLControl.vue'
-import UmlBind from '../icons/UML/UMLBind.vue'
+import UmlControl from '../icons/UML/UmlControl.vue'
+import UmlBind from '../icons/UML/UmlBind.vue'
+import UmlTimeSingle from '../icons/UML/UmlTimeSingle.vue'
+import UmlConstraint from '../icons/UML/UmlConstraint.vue'
+import UmlActive from '../icons/UML/UmlActive.vue'
+import UmlLifeLine from '../icons/UML/UmlLifeLine.vue'
+import UmlDelete from '../icons/UML/UmlDelete.vue'
+import UmlClass from '../icons/UML/UmlClass.vue'
+import UmlInterface from '../icons/UML/UmlInterface.vue'
+import UmlClass1 from '../icons/UML/UmlClass1.vue'
+import UmlActiveClass from '../icons/UML/UmlActiveClass.vue'
+import UmlDbClass from '../icons/UML/UmlDbClass.vue'
+import UmlInterface1 from '../icons/UML/UmlInterface1.vue'
 
 const allUmls = [
   {
@@ -350,7 +402,7 @@ const allUmls = [
     desc: 'UML 时序图'
   },
   {
-    type: 'UML-type',
+    type: 'UML-class',
     desc: 'UML 类图'
   },
   {
@@ -499,6 +551,17 @@ export default {
     UmlEntity,
     UmlControl,
     UmlBind,
+    UmlTimeSingle,
+    UmlConstraint,
+    UmlActive,
+    UmlLifeLine,
+    UmlDelete,
+    UmlClass,
+    UmlInterface,
+    UmlClass1,
+    UmlActiveClass,
+    UmlDbClass,
+    UmlInterface1,
   }
 }
 </script>
