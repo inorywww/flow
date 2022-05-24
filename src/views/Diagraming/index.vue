@@ -71,7 +71,21 @@ export default {
   mounted () {
     this.isView = this.$route.name === 'view'
     this.getGraph()
-    let data = ''
+    // const data = {
+    //   nodes: [
+    //     {
+    //       type: "UML-all",
+    //       x: 300,
+    //       y: 100,
+    //       properties: {
+    //         name: "hello",
+    //         body: "world"
+    //       }
+    //     }
+    //   ],
+    //   edges: []
+    // }
+    const data = {}
     if (window.location.search) {
       const query = window.location.search.substring(1).split('&').reduce((map, kv) => {
         const [key, value] = kv.split('=')
@@ -85,6 +99,9 @@ export default {
       }
     }
     this.initLogicFlow(data)
+    setTimeout(() => {
+      this.setStop()
+    }, 1000)
     // document.addEventListener('keydown', (e) => {
     //   console.log(e.keyCode);
     //   if (this.activeNodes && this.activeNodes.length > 0) {
@@ -143,6 +160,7 @@ export default {
           })
         })
       }
+      this.initEvent(lf)
       if (!this.isView) {
         lf.openSelectionSelect();
       }
@@ -155,7 +173,6 @@ export default {
             this.activeNodes = nodes
             this.activeEdges = edges
             this.getProperty()
-            console.log(this.lf);
           })
         })
         this.lf.on('history:change', () => {
@@ -163,6 +180,7 @@ export default {
             clearTimeout(this.timer)
           }
           this.timer = setTimeout(() => {
+            this.setStop()
             this.saveEditGraph()
           }, 500)
         })
@@ -243,14 +261,37 @@ export default {
       //   }
       // }]
     },
+    initEvent (lf) {
+      lf.on("input:change", ({model, key, val}) => {
+        const properties = lf.getProperties(model.id)
+        properties[key] = val.replaceAll(' ', '')
+        console.log(properties);
+        // lf.setProperties(model.id, properties);
+      })
+    },
     getGraph () {
       getGraph(this.$route.params.id).then(res => {
         if (res.status === 200) {
           this.graphData = res.data[0]
           console.log(this.graphData);
-          this.lf.addElements(JSON.parse(this.graphData.info))
+          this.lf.addElements(this.graphData.info)
           this.$nextTick(() => {
             this.lf.history.undos = []
+          })
+        }
+      })
+    },
+    setStop () {
+      this.$nextTick(() => {
+        const nodes = document.querySelectorAll('.edit-node')
+        if (nodes && nodes.length > 0) {
+          nodes.forEach(item => {
+            item.addEventListener('keydown', e => {
+              console.log('keydown');
+              if (e.key === 'Backspace') {
+                e.stopPropagation()
+              }
+            }, false)
           })
         }
       })
@@ -295,7 +336,8 @@ export default {
     },
     saveEditGraph () {
       const data = this.graphData
-      data.info = JSON.stringify(this.lf.getGraphData())
+      data.info = this.lf.getGraphData()
+      // data.info = JSON.stringify(this.lf.getGraphData())
       this.showText = '保存中...'
       this.lf.getSnapshotBase64().then(res => {
         data.img = res.data
@@ -354,7 +396,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less"> 
+@import './styles/UML.less';
 .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
   background-color: #eee !important;
   color: #606266 !important;

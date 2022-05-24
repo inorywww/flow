@@ -65,6 +65,16 @@ import ArtificialOperation from './flow/ArtificialOperation'
 import ParallelMode from './flow/ParallelMode'
 import otherImport from './flow/otherImport'
 
+//UML
+import UMLBag from './UML/UML-bag'
+import UMLCombination from './UML/UML-combination'
+import UMLAnno from './UML/UML-anno'
+import UMLContainer from './UML/UML-container'
+import UMLContainer1 from './UML/UML-container1'
+import UMLEntity from './UML/UML-entity'
+import UMLControl from './UML/UML-control'
+import UMLBind from './UML/UML-bind'
+
 export const registerCustomElement = (lf) => {
   // 注册基础图形
   lf.register(CircleNode)
@@ -112,6 +122,8 @@ export const registerCustomElement = (lf) => {
   lf.register(Line)
   lf.register(Bezier)
 
+
+
   lf.register(subProcess)
   lf.register(exData)
   lf.register(innerSave)
@@ -130,5 +142,17 @@ export const registerCustomElement = (lf) => {
   lf.register(ArtificialOperation)
   lf.register(ParallelMode)
   lf.register(otherImport)
+
+  
+  lf.register(UMLBag)
+  lf.register(UMLCombination)
+  lf.register(UMLAnno)
+  lf.register(UMLContainer)
+  lf.register(UMLContainer1)
+  lf.register(UMLEntity)
+  lf.register(UMLControl)
+  lf.register(UMLBind)
+
+
 }
 

@@ -179,14 +179,64 @@
 
       </div>
     </div>
-    <div class="group UML-Chart" v-if="showTypes.includes('UMLChart')">
-      <div class="title-box" @click="addShows('UMLChart')">
-        <svg :class="{'open': shows.includes('UMLChart')}" t="1653205704909" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="48683" width="16" height="16"><path d="M398.499 236.5l274.256 274.256-274.256 274.256z" p-id="48684"></path></svg>
-        <h1 class="node-group-title">UML图</h1>
+    <div class="group UML-Chart" v-if="showTypes.includes('UML-all')">
+      <div class="title-box" @click="addShows('UML-all')">
+        <svg :class="{'open': shows.includes('UML-all')}" t="1653205704909" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="48683" width="16" height="16"><path d="M398.499 236.5l274.256 274.256-274.256 274.256z" p-id="48684"></path></svg>
+        <h1 class="node-group-title">UML 通用</h1>
       </div>
-      <div class="node-group" v-if="shows.includes('UMLChart')" @mouseleave="detailCpt = ''">
+      <div class="node-group" v-if="shows.includes('UML-all')" @mouseleave="detailCpt = ''">
+        <div class="node-item" @mousedown="dragInNode('uml-bag')" ref="uml-bag" @mouseenter="showDetail('uml-bag', '包')">
+          <uml-bag class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-combination')" ref="uml-combination" @mouseenter="showDetail('uml-combination', '组合片段')">
+          <uml-combination class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-anno')" ref="uml-anno" @mouseenter="showDetail('uml-anno', '注释')">
+          <uml-anno class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('pro-text')" ref="uml-text" @mouseenter="showDetail('uml-text', '文本')">
+          <uml-text class="svg-node" />
+        </div>
+        
+      </div>
+    </div>
+    <div class="group UML-Chart" v-if="showTypes.includes('UML-exp')">
+      <div class="title-box" @click="addShows('UML-exp')">
+        <svg :class="{'open': shows.includes('UML-exp')}" t="1653205704909" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="48683" width="16" height="16"><path d="M398.499 236.5l274.256 274.256-274.256 274.256z" p-id="48684"></path></svg>
+        <h1 class="node-group-title">UML 用例图</h1>
+      </div>
+      <div class="node-group" v-if="shows.includes('UML-exp')" @mouseleave="detailCpt = ''">
         <div class="node-item" @mousedown="dragInNode('actor')" ref="icon-actor" @mouseenter="showDetail('icon-actor', '角色')">
           <icon-actor class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('pro-ellipse')" ref="uml-exp" @mouseenter="showDetail('uml-exp', '用例')">
+          <uml-exp class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-container')" ref="uml-container" @mouseenter="showDetail('uml-container', '容器')">
+          <uml-container class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-container1')" ref="uml-container1" @mouseenter="showDetail('uml-container1', '容器')">
+          <uml-container1 class="svg-node" />
+        </div>
+      </div>
+    </div>
+    <div class="group UML-Chart" v-if="showTypes.includes('UML-time')">
+      <div class="title-box" @click="addShows('UML-time')">
+        <svg :class="{'open': shows.includes('UML-time')}" t="1653205704909" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="48683" width="16" height="16"><path d="M398.499 236.5l274.256 274.256-274.256 274.256z" p-id="48684"></path></svg>
+        <h1 class="node-group-title">UML 时序图</h1>
+      </div>
+      <div class="node-group" v-if="shows.includes('UML-time')" @mouseleave="detailCpt = ''">
+        <div class="node-item" @mousedown="dragInNode('pro-rect')" ref="uml-obj" @mouseenter="showDetail('uml-obj', '对象')">
+          <uml-obj class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-entity')" ref="uml-entity" @mouseenter="showDetail('uml-entity', '实体')">
+          <uml-entity class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-control')" ref="uml-control" @mouseenter="showDetail('uml-control', '控制')">
+          <uml-control class="svg-node" />
+        </div>
+        <div class="node-item" @mousedown="dragInNode('uml-bind')" ref="uml-bind" @mouseenter="showDetail('uml-bind', '绑定')">
+          <uml-bind class="svg-node" />
         </div>
       </div>
     </div>
@@ -196,13 +246,16 @@
     <el-dialog
       title="图形管理"
       :visible.sync="showMoreDialog"
-      width="30%">
+      width="450px">
       <div class="inner-box">
         <el-checkbox-group class="type-list" v-model="addTypes">
-          <el-checkbox label="default">基础图形</el-checkbox>
-          <el-checkbox label="flowChart">FlowChart流程图</el-checkbox>
-          <el-checkbox label="ERChart">实体关系图（E-R图）</el-checkbox>
-          <el-checkbox label="UMLChart">UML图</el-checkbox>
+          <el-checkbox size="medium" label="default">基础图形</el-checkbox>
+          <el-checkbox size="medium" label="flowChart">FlowChart流程图</el-checkbox>
+          <el-checkbox size="medium" label="ERChart">实体关系图（E-R图）</el-checkbox>
+          <el-checkbox size="medium" :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">UML图</el-checkbox>
+          <el-checkbox-group v-model="umls" @change="handleCheckedUmlsChange">
+            <el-checkbox size="medium" :label="item.type" v-for="item in allUmls" :key="item.desc">{{item.desc}}</el-checkbox>
+          </el-checkbox-group>
         </el-checkbox-group>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -270,6 +323,41 @@ import WeakRelation from '../icons/ER/WeakRelation.vue'
 import Prevail from '../icons/ER/Prevail.vue'
 import AllPrevail from '../icons/ER/AllPrevail.vue'
 
+// UML
+import UmlBag from '../icons/UML/UmlBag.vue'
+import UmlCombination from '../icons/UML/UmlBag.vue'
+import UmlAnno from '../icons/UML/UmlAnno.vue'
+import UmlText from '../icons/UML/UmlText.vue'
+import UmlExp from '../icons/UML/UmlExp.vue'
+import UmlContainer from '../icons/UML/UmlContainer.vue'
+import UmlContainer1 from '../icons/UML/UmlContainer1.vue'
+import UmlObj from '../icons/UML/UmlObj.vue'
+import UmlEntity from '../icons/UML/UmlEntity.vue'
+import UmlControl from '../icons/UML/UMLControl.vue'
+import UmlBind from '../icons/UML/UMLBind.vue'
+
+const allUmls = [
+  {
+    type: 'UML-all',
+    desc: 'UML 通用'
+  },
+  {
+    type: 'UML-exp',
+    desc: 'UML 用例图'
+  },
+  {
+    type: 'UML-time',
+    desc: 'UML 时序图'
+  },
+  {
+    type: 'UML-type',
+    desc: 'UML 类图'
+  },
+  {
+    type: 'UML-status',
+    desc: 'UML 状态图'
+  },
+]
 export default {
   name: 'DiagramSidebar',
   props: {
@@ -280,18 +368,24 @@ export default {
   },
   data () {
     return {
-      // showTypes: [],
       shows: [],
       showMoreDialog: false,
       addTypes: [],
       detailCpt: '',
       detailName: '',
       posY: '',
+      allUmls,
+      umls: [],
+      // checkAll: true,
+      isIndeterminate: true
     }
   },
   computed: {
     showTypes () {
       return this.types
+    },
+    checkAll () {
+      return this.umls.length === this.allUmls.length
     }
   },
   mounted () {
@@ -300,6 +394,15 @@ export default {
     }, 2000)
   },
   methods: {
+    handleCheckAllChange(val) {
+      this.umls = val ? allUmls.map(item => item.type) : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedUmlsChange(value) {
+      let checkedCount = value.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.allUmls.length
+      // this.checkAll = checkedCount === this.allUmls.length
+    },
     showDetail (cpt, name) {
       this.detailCpt = cpt
       this.detailName = name
@@ -319,8 +422,12 @@ export default {
     showDialog () {
       this.showMoreDialog = true
       this.addTypes = this.showTypes
+      this.umls = this.showTypes.filter(item => item && item.includes('UML-'))
+      this.isIndeterminate = this.umls.length > 0 && this.umls.length < this.allUmls.length
     },
     confirm () {
+      this.addTypes = this.addTypes.filter(item => item &&!item.includes('UML-'))
+      this.addTypes.push(...this.umls)
       this.showMoreDialog = false
       this.$parent.graphData.types = this.addTypes
       this.$parent.saveEditGraph()
@@ -380,6 +487,18 @@ export default {
     WeakRelation,
     Prevail,
     AllPrevail,
+
+    UmlBag,
+    UmlCombination,
+    UmlAnno,
+    UmlText,
+    UmlExp,
+    UmlContainer,
+    UmlContainer1,
+    UmlObj,
+    UmlEntity,
+    UmlControl,
+    UmlBind,
   }
 }
 </script>

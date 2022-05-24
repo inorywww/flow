@@ -1,11 +1,11 @@
-import CircleNode from './CircleNode'
+import CircleNode from '../basic/CircleNode'
 
 // 椭圆
 class EllipseNewModel extends CircleNode.model {
   initNodeData(data) {
     super.initNodeData(data)
-    this.rx = 60
-    this.ry = 35
+    this.rx = 35
+    this.ry = 60
   }
   getNodeStyle() {
     const style = super.getNodeStyle()
@@ -13,7 +13,7 @@ class EllipseNewModel extends CircleNode.model {
   }
 }
 export default {
-  type: 'pro-ellipse',
+  type: 'uml-container',
   view: CircleNode.view,
   model: EllipseNewModel
 }

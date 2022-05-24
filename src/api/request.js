@@ -27,7 +27,6 @@ function endLoading(){
 
 // 请求拦截
 service.interceptors.request.use(config => {
-  console.log(config);
   // 请求前加载动画
   // startLoading();
   if(getToken()){

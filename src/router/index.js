@@ -6,10 +6,15 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'home',
-    // redirect: '/home',
-    component: () => import('../views/Home/index.vue'),
+    // name: 'home',
+    redirect: '/home',
+    component: () => import('../views/Layout/index.vue'),
     children: [
+      {
+        path: 'home',
+        name: 'home',
+        component: () => import('../views/Home/index.vue')
+      },
       {
         path: 'diagrams',
         name: 'diagrams',

@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import ShareDialog from '../../../components/ShareDIalog.vue'
+import ShareDialog from '../../../components/ShareDialog.vue'
 import { removeToken, getToken } from '../../SignIn/js/auth'
 
 export default {
