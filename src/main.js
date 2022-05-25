@@ -7,9 +7,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
 
 import router from './router'
-import axios from 'axios'
 Vue.config.productionTip = false
-
+import x2js from 'x2js'
+Vue.prototype.$x2js = new x2js()
 new Vue({
   render: (h) => h(App),
   el: "#app",

@@ -8,6 +8,7 @@
         :lf="lf"
         :activeEdges="activeEdges"
         @setStyle="setStyle"
+        ref="toolbar"
       />
     </template>
     <ShareHeader v-else :name="graphData.name"></ShareHeader>
@@ -172,6 +173,19 @@ export default {
             const { nodes, edges } = this.lf.getSelectElements()
             this.activeNodes = nodes
             this.activeEdges = edges
+            const changeColor = this.$refs['toolbar'].changeColor
+            this.$refs['toolbar'].initStyle()
+            if (nodes && nodes.length > 0) {
+              nodes.forEach(({id}) => {
+                const props = this.lf.getProperties(id)
+                changeColor(props)
+              })
+            } else if (edges && edges.length > 0) {
+              edges.forEach(({id}) => {
+                const props = this.lf.getProperties(id)
+                changeColor(props)
+              })
+            }
             this.getProperty()
           })
         })
@@ -273,7 +287,9 @@ export default {
       getGraph(this.$route.params.id).then(res => {
         if (res.status === 200) {
           this.graphData = res.data[0]
-          console.log(this.graphData);
+          console.log(this.graphData.info);
+          // this.graphData.info = JSON.parse(this.graphData.info)
+          // this.saveEditGraph()
           this.lf.addElements(this.graphData.info)
           this.$nextTick(() => {
             this.lf.history.undos = []
@@ -411,12 +427,6 @@ export default {
   display: flex;
   width: 100%;
   height: calc(100% - 160px);
-}
-.diagram-sidebar {
-  width: 185px;
-  height: calc(100% - 40px);
-  border-right: 1px solid #dadce0;
-  padding: 10px;
 }
 .diagram-panel {
   width: 300px;

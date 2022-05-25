@@ -5,7 +5,7 @@ class Model extends RectNode.model {
   initNodeData(data) {
     super.initNodeData(data)
     this.width = 120
-    this.height = 100
+    this.height = 85
   }
 }
 

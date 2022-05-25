@@ -7,7 +7,6 @@ class RectRadiusModel extends RectNode.model {
     this.radius = 6
     this.width = 80
     this.height = 120
-    this.text.editable = false
   }
 }
 export default {

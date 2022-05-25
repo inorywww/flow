@@ -5,7 +5,7 @@
       :visible.sync="show"
       @close="close"
       width="700px">
-      <div class="inner-box">
+      <div class="inner-box1">
         <div class="left">
           <div class="item">生成浏览链接</div>
         </div>
@@ -67,8 +67,10 @@ export default {
   border-top: 1px solid #e5e5e5 !important;
   padding: 0;
 }
-.inner-box {
-  display: flex;
+.inner-box1 {
+  // display: flex;
+  width: 60%;
+  margin: 0 auto;
   .left {
     border-right: 1px solid #e5e5e5;
     padding-right: 10px;

@@ -2,7 +2,7 @@
   <div id="home">
     <div class="title-box">
       <div class="title">
-        绘制流程图很容易
+        绘制流程图其实很容易
       </div>
       <div class="desc">
         一款专业强大的作图工具，是创建流程图最简单的工具。
@@ -12,7 +12,7 @@
       <span @click="click" class="text" :class="{'to-file': isLogin}">{{isLogin ? '进入我的文件' : '免费注册'}}</span>
     </div>
     <div class="img-box">
-      <img src="https://uploads-ssl.webflow.com/6184b461a39ff13bfb8c0556/618b475f9e0b746f13d961dc_light.png" alt="">
+      <img src="./images/img1.jpeg" alt="">
     </div>
     <div class="section" v-for="item in sections" :key="item.title">
       <div class="left">
@@ -73,6 +73,10 @@ export default {
 <style lang="less" scoped>
 #home {
   width: 100%;
+  height: calc(100vh - 64px);
+  overflow-y: scroll;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2QwZDBkMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDBkMGQwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=");
+  background-repeat: repeat;
   .title-box {
     margin: 10vh auto 0;
     text-align: center;
@@ -112,6 +116,7 @@ export default {
     height: 0;
     padding-bottom: 45%;
     position: relative;
+    border-radius: 8px;
     img {
       position: absolute;
       left: 0;
@@ -120,7 +125,7 @@ export default {
       height: 100%;
       box-shadow: 0 7px 28px 0 rgb(0 0 0 / 15%);
       display: block;
-      border-radius: 0;
+      border-radius: 8px;
     }
   }
   .section {

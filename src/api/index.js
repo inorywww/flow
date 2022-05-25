@@ -1,4 +1,5 @@
 import request from "./request";
+import { getToken } from "../views/SignIn/js/auth";
 
 export function getGraphs(type = 0) {
   return request({ // 0:all 1: history 2:del
@@ -6,7 +7,10 @@ export function getGraphs(type = 0) {
     method: 'get',
     params: {
       type
-    }
+    },
+    headers:{
+      Authorization:getToken()
+    },
   })
 }
 
@@ -16,7 +20,10 @@ export function getGraph(id) {
     method: 'get',
     headers: {
       showLoading: true
-    }
+    },
+    headers:{
+      Authorization:getToken()
+    },
   })
 }
 
@@ -24,7 +31,10 @@ export function addGraph(data) {
   return request({
     url: '/graphs/add',
     method: 'post',
-    data
+    data,
+    headers:{
+      Authorization:getToken()
+    },
   })
 }
 
@@ -32,7 +42,10 @@ export function editGraph(id, data) {
   return request({
     url: '/graphs/edit/' + id,
     method: 'post',
-    data
+    data,
+    headers:{
+      Authorization:getToken()
+    },
   })
 }
 
@@ -42,7 +55,10 @@ export function delOne(id, is_del = 0) {
     method: 'get',
     params: {
       is_del // 0：移到回收站 1:真删除
-    }
+    },
+    headers:{
+      Authorization:getToken()
+    },
   })
 }
 
@@ -52,13 +68,9 @@ export function cloneFile(id, name) {
     method: 'get',
     params: {
       name
-    }
-  })
-}
-
-export function delAll() {
-  return request({
-    url: '/graphs/delete',
-    method: 'get',
+    },
+    headers:{
+      Authorization:getToken()
+    },
   })
 }

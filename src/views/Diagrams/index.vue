@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getGraphs, delAll } from '../../api/index'
+import { getGraphs } from '../../api/index'
 import GraphList from '../../components/GraphList.vue'
 export default {
   name: 'diagrams',
@@ -38,11 +38,6 @@ export default {
         }
       })
     },
-    delAll () {
-      delAll().then(res => {
-        console.log(res.data);
-      })
-    },
   }
 
 }
@@ -52,5 +47,8 @@ export default {
 #diagrams {
   flex: 1;
   width: 0;
+  .title {
+    margin-top: 12px;
+  }
 }
 </style>

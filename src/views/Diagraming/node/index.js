@@ -84,6 +84,8 @@ import UMLClass1 from './UML/UMLClass1'
 import UMLActiveClass from './UML/UMLActiveClass'
 import UMLDbClass from './UML/UMLDbClass'
 import UMLInterface1 from './UML/UMLInterface1'
+import UMLPort from './UML/UMLPort'
+import NoneShapePolyline from './edge/Polyline/NoneShapePolyline'
 
 export const registerCustomElement = (lf) => {
   // 注册基础图形
@@ -129,6 +131,7 @@ export const registerCustomElement = (lf) => {
   lf.register(EmptyCirclePolyline)
   lf.register(FillDiamondPolyline)
   lf.register(EmptyDiamondPolyline)
+  lf.register(NoneShapePolyline)
   lf.register(Line)
   lf.register(Bezier)
 
@@ -172,6 +175,7 @@ export const registerCustomElement = (lf) => {
   lf.register(UMLActiveClass)
   lf.register(UMLDbClass)
   lf.register(UMLInterface1)
+  lf.register(UMLPort)
 
 }
 

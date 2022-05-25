@@ -1,16 +1,5 @@
 <template>
   <div class="toolbar">
-    <!-- <div class="toolbar-item" @click="zoomIn()">
-      <el-tooltip content="放大">
-        <zoom-in size="18" />
-      </el-tooltip>
-    </div>
-    <div class="toolbar-item" @click="zoomOut()">
-      <el-tooltip content="缩小">
-        <zoom-out size="18" />
-      </el-tooltip>
-    </div> -->
-    <!-- <div class="divider"></div> -->
     <div class="toolbar-item" :class="{'not-allowed': !undoAble}" style="margin-left: 20px" @click="undo()">
       <el-tooltip :class="{'disabled': !undoAble}" content="撤销（Ctrl+Z）">
         <step-back size="18" :disabled="!undoAble"/>
@@ -73,8 +62,8 @@
         </el-popover>
       </el-tooltip>
     </div>
-    <el-tooltip content="终点" style="max-width: 100px; margin-left: 4px">
-      <el-select v-model="aligntype" size="mini" @change="changeTextAlign">
+    <el-tooltip content="对齐方式" style="max-width: 100px; margin-left: 4px">
+      <el-select v-model="style.textAlign" size="mini" @change="changeTextAlign">
         <el-option
           v-for="item in aligns"
           :key="item.value"
@@ -93,7 +82,7 @@
           width="220"
           trigger="click"
         >
-          <sketch-picker :value="fillColor" @input="(c) => changeColorProperty(c, 'backgroundColor')"/>
+          <sketch-picker :value="style.backgroundColor" @input="(c) => changeColorProperty(c, 'backgroundColor')"/>
           <color-fill size="22" slot="reference"  :color="style.backgroundColor"/>
         </el-popover>
       </el-tooltip>
@@ -104,7 +93,7 @@
           width="220"
           trigger="click"
         >
-          <sketch-picker :value="fillColor" @input="(c) => changeColorProperty(c, 'borderColor')"/>
+          <sketch-picker :value="style.borderColor" @input="(c) => changeColorProperty(c, 'borderColor')"/>
           <color-border size="30" slot="reference"  :color="style.borderColor"/>
         </el-popover>
       </el-tooltip>
@@ -157,9 +146,6 @@
 </template>
 
 <script>
-import ZoomIn from '../icons/ZoomIn.vue' // 放大
-import ZoomOut from '../icons/ZoomOut.vue' // 缩小
-
 import StepBack from '../icons/StepBack.vue' // 后退
 import StepForward from '../icons/StepForward.vue' // 前进
 
@@ -174,15 +160,26 @@ import ColorFill from '../icons/ColorFill.vue' // 填充颜色
 import ColorBorder from '../icons/ColorBorder.vue' // 边框颜色
 import BorderWidth from '../icons/BorderWidth.vue' // 边框宽度
 import { shortStyles, borderStyles, fontFamilies } from '../constant'
-
+const defaultStyle = {
+  backgroundColor: '', // 填充色
+  gradientColor: '', // 渐变色
+  borderType: 0, // 线条类型
+  borderColor: '', // 填充颜色
+  borderWidth: 1, // 线条宽度
+  borderStyle: '', // 线条类型
+  fontSize: 12, // 文本大小
+  fontColor: '#333333', // 文本颜色
+  fontWeight: 'normal', // 文本加粗
+  fontFamily: 'Arial', // 文本样式
+  fontStyle: 'normal', // 斜体
+  lineHeight: '', // 行高
+  textAlign: '', // 对齐
+  textDecoration: 'none', // 下划线
+}
 export default {
   props: {
     lf: Object,
     activeEdges: Array,
-    fillColor: {
-      type: String,
-      default: ''
-    }
   },
   data () {
     return {
@@ -190,6 +187,9 @@ export default {
       undoAble: false,
       redoAble: false,
       colors: '#345678',
+      backgroundColor: '',
+      borderColor: '',
+      fontColor: '',
       linetype: {
         type: 'polyline',
         desc: '折线'
@@ -212,6 +212,11 @@ export default {
         }
       ],
       points: [
+        {
+          value: 'none-shape',
+          label: '无箭头',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/25/aa430643df1fa988960cde1a87e7b958.png'
+        },
         {
           value: 'fill-triangle',
           label: '实心三角形',
@@ -264,10 +269,9 @@ export default {
           img: 'https://imgheybox.max-c.com/oa/2022/05/10/4a2a7f659ceb1cc6bbfb52d9e728d77f.png'
         },
       ],
-      aligntype: 'center',
       borderWidthOptions: Array(11).fill().map((_, i) => i),
       style: {
-        backgroundColor: '#333333', // 填充色
+        backgroundColor: '', // 填充色
         gradientColor: '', // 渐变色
         borderType: 0, // 线条类型
         borderColor: '', // 填充颜色
@@ -297,12 +301,6 @@ export default {
     saveGraph () {
       this.$parent.downloadImg()
     },
-    zoomIn () {
-      this.lf.zoom(true)
-    },
-    zoomOut () {
-      this.lf.zoom(false)
-    },
     undo () {
       if (this.undoAble) {
         this.lf.undo()
@@ -319,15 +317,26 @@ export default {
       })
     },
     changeColorProperty ({ rgba: { r, g, b, a } }, type) {
-      if (this.disabled) {
-        return
-      }
       const color = `rgba(${r},${g},${b},${a})`
       this.style[type] = color
       this.$set(this.style, type, color)
       this.$emit('setStyle', {
         [type]: color
       })
+    },
+    changeColor (props) {
+      if (props) {
+        for (let i in props) {
+          if (this.style.hasOwnProperty(i)) {
+            this.$set(this.style, i, props[i])
+          }
+        }
+      }
+    },
+    initStyle () {
+      for (let i in this.style) {
+        this.$set(this.style, i, defaultStyle[i])
+      }
     },
     changeTextAlign (val) {
       this.$emit('setStyle', {
@@ -369,7 +378,6 @@ export default {
       })
     },
     changeLineType(value) {
-      console.log(this.pointtype.type + '-' + value);
       const { lf, activeEdges } = this.$props
       const { graphModel } = lf
       lf.setDefaultEdgeType(value)
@@ -383,7 +391,6 @@ export default {
     changePoint (value) {
       if (value) {
         this.pointtype.type = value
-        console.log(value + '-' + this.linetype.type);
         const { lf, activeEdges } = this.$props
         const { graphModel } = lf
         if(activeEdges && activeEdges.length > 0) {
@@ -400,8 +407,6 @@ export default {
     ColorBorder,
     IconBlod,
     IconBevel,
-    ZoomIn,
-    ZoomOut,
     StepBack,
     StepForward,
     Underline,

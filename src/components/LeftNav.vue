@@ -50,7 +50,6 @@
           action=""
           :auto-upload="false"
           :on-change="beforeUpload"
-          :on-remove="removeFile"
           multiple>
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -63,7 +62,6 @@
 
 <script>
 import { addGraph } from '../api/index'
-import { lfJson2Xml, lfXml2Json} from '@logicflow/extension';
 export default {
   name: 'leftNav',
   data () {
@@ -74,7 +72,6 @@ export default {
   },
   watch: {
   '$route' (to) {
-    console.log(to);
       this.active = to.name
     }
   },
@@ -120,27 +117,26 @@ export default {
     beforeUpload (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        // 当读取完成时，内容只在`reader.result`中
         this.newFile({
-          info: lfXml2Json(reader.result)
+          info: file.name.includes('.lf') ? JSON.parse(reader.result) : this.$x2js.xml2js(reader.result)
         })
-        // console.log(reader.result);
-        // console.log(lfXml2Json(reader.result));
       };
       reader.readAsText(file.raw);
     },
-    removeFile () {
-
-    }
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" >
 .upload-demo {
   display: flex;
   align-items: center;
   flex-direction: column
+}
+.inner-box {
+  width: 60%;
+  margin: 0 auto;
+  padding: 12px 0;
 }
 .el-upload {
   width: 100% !important;

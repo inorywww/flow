@@ -129,11 +129,11 @@ export default {
     if (this.is_trash) {
       this.menuItems = [
         {
-          icon: 'https://imgheybox.max-c.com/oa/2022/05/12/c36022e3f0cdfd12d8bca47d8acd61a7.png',
+          icon: 'https://imgheybox.max-c.com/oa/2022/05/25/a968bae9ab5c28165815002e676d9dd2.png',
           desc: '恢复'
         },
         {
-          icon: 'https://imgheybox.max-c.com/oa/2022/05/12/a9ff17ab62d2a587a5d1c45d4047aedc.png',
+          icon: 'https://imgheybox.max-c.com/oa/2022/05/25/6d362dac49067a1f3f4e17239a78abac.png',
           desc: '彻底删除'
         },
       ]
@@ -251,7 +251,7 @@ export default {
       } else if (subItem.key === 'lf') {
         download(item.name + '.lf', item.info);
       } else {
-        download(item.name + '.xml', lfJson2Xml(JSON.parse(item.info)));
+        download(item.name + '.xml', lfJson2Xml(item.info));
       }
       function download(name, data) {
         var urlObject = window.URL || window.webkitURL || window;
