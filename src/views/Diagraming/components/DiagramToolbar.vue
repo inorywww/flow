@@ -380,8 +380,8 @@ export default {
     changeLineType(value) {
       const { lf, activeEdges } = this.$props
       const { graphModel } = lf
-      lf.setDefaultEdgeType(value)
       this.linetype.type = value
+      lf.setDefaultEdgeType(this.pointtype.type + '-' + this.linetype.type)
       if(activeEdges && activeEdges.length > 0) {
         activeEdges.forEach(edge => {
           graphModel.changeEdgeType(edge.id, value)
@@ -393,6 +393,7 @@ export default {
         this.pointtype.type = value
         const { lf, activeEdges } = this.$props
         const { graphModel } = lf
+        lf.setDefaultEdgeType(this.pointtype.type + '-' + this.linetype.type)
         if(activeEdges && activeEdges.length > 0) {
           activeEdges.forEach(edge => {
             graphModel.changeEdgeType(edge.id, value + '-' + this.linetype.type)

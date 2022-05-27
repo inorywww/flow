@@ -261,7 +261,9 @@ export default {
     rename () {
       this.renameVal = this.graphData.name
       this.renameDialogVisible = true
-      this.$refs['rename-input'].focus()
+      this.$nextTick(() => {
+        this.$refs['rename-input'].focus()
+      })
     },
     confirmRename () {
       this.graphData.name = this.renameVal

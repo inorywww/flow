@@ -249,7 +249,7 @@ export default {
       if (subItem.key === 'png' || subItem.key === 'jpg') {
         base64ToPng(item.img, item.name, subItem.key)
       } else if (subItem.key === 'lf') {
-        download(item.name + '.lf', item.info);
+        download(item.name + '.lf', JSON.stringify(item.info));
       } else {
         download(item.name + '.xml', lfJson2Xml(item.info));
       }

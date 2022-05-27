@@ -86,6 +86,7 @@ import UMLDbClass from './UML/UMLDbClass'
 import UMLInterface1 from './UML/UMLInterface1'
 import UMLPort from './UML/UMLPort'
 import NoneShapePolyline from './edge/Polyline/NoneShapePolyline'
+import NoneShapeLine from './edge/Line/NoneShapeLine'
 
 export const registerCustomElement = (lf) => {
   // 注册基础图形
@@ -133,6 +134,7 @@ export const registerCustomElement = (lf) => {
   lf.register(EmptyDiamondPolyline)
   lf.register(NoneShapePolyline)
   lf.register(Line)
+  lf.register(NoneShapeLine)
   lf.register(Bezier)
 
 

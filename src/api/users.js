@@ -47,9 +47,9 @@ export function checkCode(data) {
 
 
 // 找回密码
-export function forget(account) {
+export function forget() {
   return request({
-    url: '/admin/signin?account=' + account,
+    url: '/admin/forget',
     method: 'get'
   })
 }

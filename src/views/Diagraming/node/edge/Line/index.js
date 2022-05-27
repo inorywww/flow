@@ -20,7 +20,7 @@ class Model extends LineEdgeModel {
   }
 }
 export default {
-  type: 'pro-line',
+  type: 'fill-triangle-line',
   view: LineEdge,
   model: Model
 }
