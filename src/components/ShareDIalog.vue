@@ -69,7 +69,7 @@ export default {
 }
 .inner-box1 {
   // display: flex;
-  width: 60%;
+  width: 90%;
   margin: 0 auto;
   .left {
     border-right: 1px solid #e5e5e5;

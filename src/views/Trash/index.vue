@@ -45,5 +45,8 @@ export default {
 #diagrams {
   flex: 1;
   width: 0;
+  .title {
+    margin-top: 12px;
+  }
 }
 </style>

@@ -41,17 +41,17 @@ export default {
           desc: '只需拖动即可创建新图形，助力您工作学习。绘制流程图只需要拖动即可。'
         },
         {
-          img: 'https://uploads-ssl.webflow.com/6184b461a39ff13bfb8c0556/618b5aa56f9d88fbf98ca492_create-node-gif.gif',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/30/5df8984349c8bc855d2072d90371182b.png',
           title: '多格式导入导出',
           desc: '支持多种格式导入导出，高清图片、LF文件、XML等多种文件格式。'
         },
         {
-          img: 'https://uploads-ssl.webflow.com/6184b461a39ff13bfb8c0556/618b5aa56f9d88fbf98ca492_create-node-gif.gif',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/30/6553485eb2c1905ae92d0ce36d940d56.png',
           title: '多种图形工具',
           desc: '支持流程图、E-R图、UML图等多种专业图形绘制。'
         },
         {
-          img: 'https://uploads-ssl.webflow.com/6184b461a39ff13bfb8c0556/618b5aa56f9d88fbf98ca492_create-node-gif.gif',
+          img: 'https://imgheybox.max-c.com/oa/2022/05/30/63067b364372cafa811befd6dd7e8e7f.png',
           title: '简单直观的界面',
           desc: '为了更方便绘制流程图，删除了很多非必要的功能。'
         },

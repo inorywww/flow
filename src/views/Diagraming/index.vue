@@ -128,6 +128,7 @@ export default {
         container: this.$refs.diagram,
         stopMoveGraph: !this.isView,
         metaKeyMultipleSelected: true,
+        snapline: false,
         keyboard: {
           enabled: true,
           shortcuts: this.shortcuts

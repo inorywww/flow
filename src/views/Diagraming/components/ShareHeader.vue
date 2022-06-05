@@ -2,7 +2,7 @@
   <div id="share-header">
     <div class="inner">
       <div class="left">
-        <div class="home">home</div>
+        <a class="home" href="/">INORYWW</a>
         <div class="name">{{name}}</div>
       </div>
     </div>
@@ -40,6 +40,9 @@ export default {
       display: flex;
       .home {
         margin: 0 20px;
+        font-size: 1.3rem;
+        font-family: 微软雅黑;
+        font-weight: 800;
       }
     }
   }

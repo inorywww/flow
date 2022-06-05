@@ -65,7 +65,7 @@
           </div>
           <div class="line">
             <div class="验证码">验证码</div>
-            <el-input v-model="code" style="max-width: 360px"></el-input>
+            <el-input v-model="code" style="max-width: 360px; flex: 1"></el-input>
             <div @click="getCode" class="code-btn" :class="{cd: cd > 0}">{{cd > 0 ? `${cd}s后重试` : '获取验证码'}}</div>
           </div>
         </div>
